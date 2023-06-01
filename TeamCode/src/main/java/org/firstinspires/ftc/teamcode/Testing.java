@@ -1,18 +1,15 @@
-package org.firstinspires.ftc.teamcode.VisionBase;
+package org.firstinspires.ftc.teamcode;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
-import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.subsystems.SubConstants;
+import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 
 @TeleOp
 public class Testing extends LinearOpMode{
@@ -63,7 +60,7 @@ public class Testing extends LinearOpMode{
 //            telemetry.update();
 //        }
         while (!isStopRequested()) {
-            angle = (turntable.getCurrentPosition()/SubConstants.ticksperdeg);
+            angle = (turntable.getCurrentPosition()*SubConstants.degspertick);
             telemetry.addData("angle", angle);
             output = controller.calculate(45, angle);
             turntable.setPower(output);
