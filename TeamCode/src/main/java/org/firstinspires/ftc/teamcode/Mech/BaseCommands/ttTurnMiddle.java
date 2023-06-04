@@ -20,7 +20,7 @@ public class ttTurnMiddle extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if((DepositSub.getTTVelocity()<5) && (DepositSub.getTTAngle()<(1)) && (DepositSub.getTTAngle()>(-1)))
+        if((DepositSub.getTTVelocity()<5) && (DepositSub.getTTAngle()<(2.5)) && (DepositSub.getTTAngle()>(-2.5)))
         {return true;}
         return false;
     }

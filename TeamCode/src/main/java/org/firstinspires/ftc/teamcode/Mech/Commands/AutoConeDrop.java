@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.Mech.Commands;
 
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import com.arcrobotics.ftclib.command.WaitCommand;
 
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.depositClose;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.depositOpen;
@@ -19,12 +21,18 @@ public class AutoConeDrop extends SequentialCommandGroup {
     public AutoConeDrop(DepositSubsystem DepositSub, vSlideSubsystem vSlideSub)
     {
         addCommands (
-            new SequentialCommandGroup(new ttTurnRight(DepositSub), new highSlideOpen(vSlideSub), new dropperDrop(DepositSub)),
-            new depositOpen(DepositSub),
-            new WaitCommand(100),
-            new SequentialCommandGroup(new ttTurnMiddle(DepositSub), new vSlideClose(vSlideSub), new dropperGrab(DepositSub))
+                new SequentialCommandGroup(
+                        new depositClose(DepositSub),
+                        new dropperDrop(DepositSub),
+                        new ParallelCommandGroup(new highSlideOpen(vSlideSub), new ttTurnRight(DepositSub)),
+                        new depositOpen(DepositSub),
+                        new WaitCommand(200),
+                        new dropperGrab(DepositSub),
+                        new WaitCommand(200),
+                        new ParallelCommandGroup(new vSlideClose(vSlideSub), new ttTurnMiddle(DepositSub))),
+                        new WaitCommand(1000)
         );
-        addRequirements(DepositSub);
+        addRequirements(DepositSub, vSlideSub);
     }
 
 }

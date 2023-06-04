@@ -5,6 +5,8 @@ import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 public class ttTurnRight extends CommandBase {
 
     // The subsystem the command runs on
@@ -17,12 +19,12 @@ public class ttTurnRight extends CommandBase {
 
     @Override
     public void execute() {
-        DepositSub.turntableToAngle((SubConstants.ttRightAngle));
+            DepositSub.turntableToAngle(SubConstants.ttRightAngle);
     }
 
     @Override
     public boolean isFinished() {
-        if((DepositSub.getTTVelocity()<5) && (DepositSub.getTTAngle()<(SubConstants.ttRightAngle+1)) && (DepositSub.getTTAngle()>(SubConstants.ttRightAngle-1)))
+        if((DepositSub.getTTVelocity()<5) && (DepositSub.getTTAngle()<(SubConstants.ttRightAngle+2.5)) && (DepositSub.getTTAngle()>(SubConstants.ttRightAngle-2.5)))
         {return true;}
         return false;
     }

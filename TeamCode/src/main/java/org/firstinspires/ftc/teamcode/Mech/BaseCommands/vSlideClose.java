@@ -14,13 +14,17 @@ public class vSlideClose extends CommandBase {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
         vSlideSub.vSlideToPosition(0);
+    }
+    @Override
+    public void end(boolean interrupted) {
+        vSlideSub.setPower(0);
     }
 
     @Override
     public boolean isFinished() {
-        if(((vSlideSub.getSlideVelocity()<5) && (vSlideSub.getSlidePosition()<(5))) || (vSlideSub.slideCurrentSpike()))
+        if(((vSlideSub.getSlideVelocity()<5) && (vSlideSub.getSlidePosition()<(15))) || (vSlideSub.slideCurrentSpike()) || (vSlideSub.vClose()))
         {return true;}
         return false;
     }

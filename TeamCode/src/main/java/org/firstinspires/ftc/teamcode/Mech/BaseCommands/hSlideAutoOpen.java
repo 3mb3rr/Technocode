@@ -10,6 +10,7 @@ public class hSlideAutoOpen extends CommandBase {
 
     // The subsystem the command runs on
     private final hSlideSubsystem hSlideSub;
+    private int target = (SubConstants.hSlidePos[5-SubConstants.conestackHeight]);
 
     public hSlideAutoOpen(hSlideSubsystem subsystem) {
         hSlideSub = subsystem;
@@ -17,13 +18,14 @@ public class hSlideAutoOpen extends CommandBase {
     }
 
     @Override
-    public void execute() {
-        hSlideSub.hSlideToPosition((SubConstants.hSlidePos[5-SubConstants.conestackHeight]));
+    public void initialize() {
+        target = (SubConstants.hSlidePos[5-SubConstants.conestackHeight]);
+        hSlideSub.hSlideToPosition(target);
     }
 
     @Override
     public boolean isFinished() {
-        if((hSlideSub.getSlideVelocity()<5) && (hSlideSub.getSlidePosition()<(SubConstants.hPolePos+2)) && (hSlideSub.getSlidePosition()>(SubConstants.hPolePos-2)))
+        if((hSlideSub.getSlideVelocity()<5) && (hSlideSub.getSlidePosition()<(target+2)) && (hSlideSub.getSlidePosition()>(target-2)))
         {return true;}
         return false;
     }

@@ -18,10 +18,14 @@ public class hSlideClose extends CommandBase {
     public void execute() {
         hSlideSub.hSlideToPosition(0);
     }
+    @Override
+    public void end(boolean interrupted) {
+        hSlideSub.hSlideSetPower(0.1);
+    }
 
     @Override
     public boolean isFinished() {
-        if((hSlideSub.getSlideVelocity()<5) && (hSlideSub.getSlidePosition()<(5)))
+        if((hSlideSub.getSlidePosition()<(50)) || (hSlideSub.slideCurrentSpike()) || (hSlideSub.hClose()))
         {return true;}
         return false;
     }

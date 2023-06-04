@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Mech.subsystems;
 
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.qualcomm.robotcore.hardware.Servo;
@@ -30,13 +31,16 @@ public class DepositSubsystem extends SubsystemBase {
         deposit = hMap.get(Servo.class, "deposit");
         dropper = hMap.get(Servo.class, "dropper");
         turntable =  hMap.get(DcMotorEx.class, "turntable");
+        turntable.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        turntable.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         ttAngle = (turntable.getCurrentPosition()*SubConstants.degspertick);
+
     }
 
 
     public void turntableToAngle(int degrees){
         ttAngle = (turntable.getCurrentPosition()*SubConstants.degspertick);
-        ttOutput = controller.calculate(45, ttAngle);
+        ttOutput = controller.calculate(degrees, ttAngle);
         turntable.setPower(ttOutput);
     }
     public void openAligner(){
@@ -55,14 +59,16 @@ public class DepositSubsystem extends SubsystemBase {
         dropper.setPosition(SubConstants.dropperDrop);
     }
     public void dropperGrab(){
-        aligner.setPosition(SubConstants.dropperCollect);
+        dropper.setPosition(SubConstants.dropperCollect);
     }
     public void dropperMid(){
         aligner.setPosition(SubConstants.dropperMid);
     }
 
     public double getTTVelocity() { return turntable.getVelocity();}
-    public double getTTAngle() { return ttAngle;}
+    public double getTTAngle() {
+        ttAngle = (turntable.getCurrentPosition()*SubConstants.degspertick);
+        return ttAngle;}
 
     public boolean hasCone() {
         switch (depositState) {

@@ -13,13 +13,13 @@ import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 
 @TeleOp
 public class Testing extends LinearOpMode{
-    DcMotorEx hSlide, arm, turntable;
+    DcMotorEx hSlide, arm, turntable, vSlide;
     Servo dropper;
     Servo aligner;
     Servo deposit, grabber, grotate;
     AnalogInput Pot;
     DigitalChannel ttSensor;
-    PIDCoefficients coefficients = new PIDCoefficients(0.02, 0, 0);
+    PIDCoefficients coefficients = new PIDCoefficients(0.01, 0, 0);
     BasicPID controller = new BasicPID(coefficients);
     ElapsedTime timer = new ElapsedTime();
     double armF = 0.18;
@@ -27,6 +27,9 @@ public class Testing extends LinearOpMode{
     public void runOpMode() {
         hSlide = hardwareMap.get(DcMotorEx.class, "hslide");
         hSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vSlide = hardwareMap.get(DcMotorEx.class, "vslide");
+        vSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         hSlide.setDirection(DcMotorEx.Direction.REVERSE);
         dropper = hardwareMap.get(Servo.class, "dropper");
         aligner = hardwareMap.get(Servo.class, "aligner");
@@ -48,6 +51,19 @@ public class Testing extends LinearOpMode{
         double angle = 0;
         int targetpos = 0;
         double output = 0;
+        double ttOutput = 0;
+        double ttAngle = 0;
+        waitForStart();
+        while(!isStopRequested()){
+            telemetry.addData("hSlide", hSlide.getCurrentPosition());
+            telemetry.update();
+        }
+//        while(!isStopRequested()){
+//            telemetry.addData("Slide position", vSlide.getCurrentPosition());
+//            output = controller.calculate(850, vSlide.getCurrentPosition());
+//            vSlide.setPower(output+0.1);
+//            telemetry.addData("output", output);
+//            telemetry.update();}
 //        while (!isStopRequested()) {
 //            if(idk) { timer.reset(); idk = false;}
 //            telemetry.addData("Slide position", hSlide.getCurrentPosition());
@@ -59,17 +75,17 @@ public class Testing extends LinearOpMode{
 //            telemetry.addData("output", output);
 //            telemetry.update();
 //        }
-        while (!isStopRequested()) {
-            angle = (turntable.getCurrentPosition()*SubConstants.degspertick);
-            telemetry.addData("angle", angle);
-            output = controller.calculate(45, angle);
-            turntable.setPower(output);
-            telemetry.addData("velocity", turntable.getVelocity());
-            telemetry.addData("output", output);
-            telemetry.update();
-//while(ttSensor.getState())
-//turntable.setPower(0.2);
-        }
+//        while (!isStopRequested()) {
+//            angle = (turntable.getCurrentPosition()*SubConstants.degspertick);
+//            telemetry.addData("angle", angle);
+//            output = controller.calculate(45, angle);
+//            turntable.setPower(output);
+//            telemetry.addData("velocity", turntable.getVelocity());
+//            telemetry.addData("output", output);
+//            telemetry.update();
+////while(ttSensor.getState())
+////turntable.setPower(0.2);
+//        }
 //        grotate.setPosition(0.59);
 //        while (angle>-15) {
 //            angle = (Pot.getVoltage()-0.584)/SubConstants.degpervolt;
@@ -79,6 +95,7 @@ public class Testing extends LinearOpMode{
 //            telemetry.addData("velocity", arm.getVelocity());
 //            telemetry.addData("output", output);
 //            telemetry.update();}
+//                grabber.setPosition(0.8);
 //                grabber.setPosition(0.8);
 //                sleep(500);
 //                grabber.setPosition(0.57);
@@ -97,11 +114,7 @@ public class Testing extends LinearOpMode{
 //            if(angle>90) grabber.setPosition(0.8);
 
         }
-//            telemetry.addData("Slide position", vSlide.getCurrentPosition());
-//            output = controller.calculate(900, vSlide.getCurrentPosition());
-//            vSlide.setPower(output+0.1);
-//            telemetry.addData("output", output);
-//            telemetry.update();
+
 //        }
 
 }

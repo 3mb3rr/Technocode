@@ -20,8 +20,10 @@ public class IntakeSubsystem extends SubsystemBase {
     public double armOutput = 0;
     public double armAngle = 0;
     public double grotatePos = 0;
+    public int armTargetAngle = 0;
+    public boolean level = false;
     private final DcMotorEx arm;
-    PIDCoefficients coefficients = new PIDCoefficients(SubConstants.tKp, SubConstants.tKi, SubConstants.tKd);
+    PIDCoefficients coefficients = new PIDCoefficients(SubConstants.aKp, SubConstants.aKi, SubConstants.aKd);
     BasicPID controller = new BasicPID(coefficients);
     public ElapsedTime slideTime = new ElapsedTime();
     public enum Grabber {
@@ -45,16 +47,24 @@ public class IntakeSubsystem extends SubsystemBase {
         grabber.setPosition(SubConstants.grabberClose);
     }
     public void grotateToAngle(int angle){
-//        grotatePos = SubConstants.grotatePosPerDeg*angle +(whatever the 0 degrees is)
+        level = false;
+        grotatePos = 0.485+(angle*SubConstants.grotatePosPerDeg);
         grotate.setPosition(grotatePos);
+    }
+    public void grotateLevel(){
+        level = true;
     }
 
 
     public double getArmVelocity() { return arm.getVelocity();}
     public double getArmAngle() { return armAngle;}
     public void armToAngle(int angle) {
-            armOutput = controller.calculate(-15, angle)+(SubConstants.armFeedforward*Math.cos(Math.toRadians(angle)));
-            arm.setPower(armOutput);}
+            armTargetAngle = angle;
+    }
+    public void setArmPower(double power){
+        arm.setPower(power);
+    }
+
 
     public boolean hasCone() {
         switch (grabberState) {
@@ -66,6 +76,17 @@ public class IntakeSubsystem extends SubsystemBase {
     public void hasCone(boolean decision){
         if(decision){grabberState = Grabber.hasCone;}
         else {grabberState = Grabber.noCone;}
+    }
+    @Override
+    public void periodic(){
+        armAngle = (Pot.getVoltage()-0.584)/SubConstants.degpervolt;
+        armOutput = controller.calculate(armTargetAngle, armAngle)+(SubConstants.armFeedforward*Math.cos(Math.toRadians(armAngle)));
+        arm.setPower(armOutput);
+        if (level){
+            grotatePos = 0.485+((-armAngle)*SubConstants.grotatePosPerDeg);
+            grotate.setPosition(grotatePos);
+        }
+
     }
 
 }
