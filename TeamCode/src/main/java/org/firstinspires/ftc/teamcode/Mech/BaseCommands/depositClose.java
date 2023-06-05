@@ -16,6 +16,7 @@ public class depositClose extends CommandBase {
     @Override
     public void initialize() {
         DepositSub.closeDeposit();
+        DepositSub.hasCone(true);
     }
 
     @Override

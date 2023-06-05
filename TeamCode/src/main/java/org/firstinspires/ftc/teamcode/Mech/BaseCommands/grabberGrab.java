@@ -18,6 +18,7 @@ public class grabberGrab extends CommandBase {
     @Override
     public void initialize() {
         IntakeSub.closeGrabber();
+        IntakeSub.hasCone(true);
     }
 
     @Override
