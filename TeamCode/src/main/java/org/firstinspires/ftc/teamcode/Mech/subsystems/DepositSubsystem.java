@@ -27,6 +27,7 @@ public class DepositSubsystem extends SubsystemBase {
     }
     Deposit depositState = Deposit.hasCone;
     public DepositSubsystem(final HardwareMap hMap) {
+        register();
         aligner = hMap.get(Servo.class, "aligner");
         deposit = hMap.get(Servo.class, "deposit");
         dropper = hMap.get(Servo.class, "dropper");
@@ -34,6 +35,9 @@ public class DepositSubsystem extends SubsystemBase {
         turntable.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         turntable.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         ttAngle = (turntable.getCurrentPosition()*SubConstants.degspertick);
+        dropperGrab();
+        closeAligner();
+        openDeposit();
 
     }
 
@@ -42,6 +46,9 @@ public class DepositSubsystem extends SubsystemBase {
         ttAngle = (turntable.getCurrentPosition()*SubConstants.degspertick);
         ttOutput = controller.calculate(degrees, ttAngle);
         turntable.setPower(ttOutput);
+    }
+    public void setTTPower(double power){
+        turntable.setPower(power);
     }
     public void openAligner(){
         aligner.setPosition(SubConstants.alignerOpen);
@@ -62,7 +69,7 @@ public class DepositSubsystem extends SubsystemBase {
         dropper.setPosition(SubConstants.dropperCollect);
     }
     public void dropperMid(){
-        aligner.setPosition(SubConstants.dropperMid);
+        dropper.setPosition(SubConstants.dropperMid);
     }
 
     public double getTTVelocity() { return turntable.getVelocity();}

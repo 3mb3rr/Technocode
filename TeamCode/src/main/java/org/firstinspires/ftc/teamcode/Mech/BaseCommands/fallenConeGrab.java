@@ -6,24 +6,27 @@ import org.firstinspires.ftc.teamcode.Mech.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.hSlideSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 
-public class armDrop extends CommandBase {
+public class fallenConeGrab extends CommandBase {
 
     // The subsystem the command runs on
     private final IntakeSubsystem IntakeSub;
 
-    public armDrop(IntakeSubsystem subsystem) {
+    public fallenConeGrab(IntakeSubsystem subsystem) {
         IntakeSub = subsystem;
         addRequirements(IntakeSub);
     }
+
     @Override
     public void initialize() {
-        IntakeSub.grotateToAngle(70);
-        IntakeSub.armToAngle(85);
+        IntakeSub.armToAngle(0);
+        IntakeSub.grotateToAngle(-90);
     }
+
 
     @Override
     public boolean isFinished() {
-        if((IntakeSub.getArmVelocity()<1) && (IntakeSub.getArmAngle()>89))
+            if(((IntakeSub.getArmVelocity()<1) && (IntakeSub.getArmAngle()<1.5) && (IntakeSub.getArmAngle()>-1.5))
+                || (IntakeSub.getArmVelocity()==0))
         {return true;}
         return false;
     }

@@ -19,13 +19,14 @@ public class autoArmDown extends CommandBase {
     @Override
     public void initialize() {
         IntakeSub.armToAngle(SubConstants.armAngle[5-SubConstants.conestackHeight]);
-        IntakeSub.grotateLevel();
+        IntakeSub.grotateToAngle(-SubConstants.armAngle[5-SubConstants.conestackHeight]);
     }
 
 
     @Override
     public boolean isFinished() {
-        if((IntakeSub.getArmVelocity()<1) && (IntakeSub.getArmAngle()<(SubConstants.armAngle[5-SubConstants.conestackHeight]+1.5)) && (IntakeSub.getArmAngle()>(SubConstants.armAngle[5-SubConstants.conestackHeight]-1.5)))
+        if(((IntakeSub.getArmVelocity()<1) && (IntakeSub.getArmAngle()<(SubConstants.armAngle[5-SubConstants.conestackHeight]+1.5)) && (IntakeSub.getArmAngle()>(SubConstants.armAngle[5-SubConstants.conestackHeight]-1.5)))
+        || (IntakeSub.getArmVelocity()<1))
         {return true;}
         return false;
     }

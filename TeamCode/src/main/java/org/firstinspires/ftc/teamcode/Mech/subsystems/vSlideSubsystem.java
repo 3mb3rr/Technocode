@@ -27,6 +27,7 @@ public class vSlideSubsystem extends SubsystemBase {
     }
     Deposit depositState = Deposit.hasCone;
     public vSlideSubsystem(final HardwareMap hMap) {
+        register();
         vSlide =  hMap.get(DcMotorEx.class, "vslide");
         vSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         vSlide.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -43,14 +44,15 @@ public class vSlideSubsystem extends SubsystemBase {
     public double getSlideVelocity() { return vSlide.getVelocity();}
     public double getSlidePosition() { return vSlide.getCurrentPosition();}
     public boolean slideCurrentSpike() { return vSlide.isOverCurrent();}
-    public boolean vClose() { return !vClose.getState();}
+    public boolean vClose() { return
+            !vClose.getState();}
 
     @Override
     public void periodic(){
         if (targetPos!=-1){
             vSlideOutput = controller.calculate(targetPos, vSlide.getCurrentPosition());
         }
-        vSlide.setPower(vSlideOutput+0.1);
+        vSlide.setPower(vSlideOutput+0.15);
     }
 
 }

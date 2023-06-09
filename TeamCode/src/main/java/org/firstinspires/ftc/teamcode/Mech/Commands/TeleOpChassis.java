@@ -1,28 +1,28 @@
-package org.firstinspires.ftc.teamcode.Mech.BaseCommands;
+package org.firstinspires.ftc.teamcode.Mech.Commands;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.Mech.subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 
-public class chassisContestedPole extends CommandBase {
+public class TeleOpChassis extends CommandBase {
 
     // The subsystem the command runs on
     private final ChassisSubsystem ChassisSub;
 
-    public chassisContestedPole(ChassisSubsystem subsystem) {
+    public TeleOpChassis(ChassisSubsystem subsystem) {
         ChassisSub = subsystem;
         addRequirements(ChassisSub);
     }
 
     @Override
-    public void initialize() {
-        ChassisSub.moveTo((new Pose2d(-27, 0, Math.toRadians(0))), (new Pose2d(-50, 2, Math.toRadians(88.5))));
+    public void execute() {
+        ChassisSub.TeleOp();
     }
 
     @Override
     public boolean isFinished() {
-        return ChassisSub.atCorrectPosition();
+        return false;
     }
 
 }

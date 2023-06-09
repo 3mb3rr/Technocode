@@ -24,8 +24,13 @@ public class hSlideAutoOpen extends CommandBase {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        hSlideSub.hSlideToPosition(target);
+    }
+
+    @Override
     public boolean isFinished() {
-        if((hSlideSub.getSlideVelocity()<5) && (hSlideSub.getSlidePosition()<(target+2)) && (hSlideSub.getSlidePosition()>(target-2)))
+        if(((hSlideSub.getSlideVelocity()<2) && (hSlideSub.getSlidePosition()<(target+2)) && (hSlideSub.getSlidePosition()>(target-2))) || (hSlideSub.getSlideVelocity()<1))
         {return true;}
         return false;
     }

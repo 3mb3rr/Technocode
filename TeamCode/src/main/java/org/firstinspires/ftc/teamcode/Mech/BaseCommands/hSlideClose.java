@@ -15,17 +15,18 @@ public class hSlideClose extends CommandBase {
     }
 
     @Override
-    public void execute() {
-        hSlideSub.hSlideToPosition(0);
+    public void initialize() {
+        hSlideSub.hSlideSetPower(-1);;
     }
     @Override
     public void end(boolean interrupted) {
-        hSlideSub.hSlideSetPower(0.1);
+        hSlideSub.hSlideSetPower(0);
     }
+
 
     @Override
     public boolean isFinished() {
-        if((hSlideSub.getSlidePosition()<(50)) || (hSlideSub.slideCurrentSpike()) || (hSlideSub.hClose()))
+        if((hSlideSub.hClose()) || (hSlideSub.slideCurrentSpike()))
         {return true;}
         return false;
     }

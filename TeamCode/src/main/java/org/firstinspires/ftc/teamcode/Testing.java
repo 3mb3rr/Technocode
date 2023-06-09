@@ -7,8 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 
 @TeleOp
@@ -18,11 +21,13 @@ public class Testing extends LinearOpMode{
     Servo aligner;
     Servo deposit, grabber, grotate;
     AnalogInput Pot;
+    DistanceSensor gSensor;
     DigitalChannel ttSensor;
-    PIDCoefficients coefficients = new PIDCoefficients(0.01, 0, 0);
+    DigitalChannel hClose, vClose;
+
+    PIDCoefficients coefficients = new PIDCoefficients(SubConstants.tKp, SubConstants.tKi, SubConstants.tKd);
     BasicPID controller = new BasicPID(coefficients);
     ElapsedTime timer = new ElapsedTime();
-    double armF = 0.18;
     @Override
     public void runOpMode() {
         hSlide = hardwareMap.get(DcMotorEx.class, "hslide");
@@ -33,13 +38,15 @@ public class Testing extends LinearOpMode{
         hSlide.setDirection(DcMotorEx.Direction.REVERSE);
         dropper = hardwareMap.get(Servo.class, "dropper");
         aligner = hardwareMap.get(Servo.class, "aligner");
-        deposit = hardwareMap.get(Servo.class, "aligner");
+        deposit = hardwareMap.get(Servo.class, "deposit");
         Pot = hardwareMap.get(AnalogInput.class, "armpot");
         arm = hardwareMap.get(DcMotorEx.class, "arm");
         grabber = hardwareMap.get(Servo.class, "grabber");
         grotate = hardwareMap.get(Servo.class, "grotate");
         turntable = hardwareMap.get(DcMotorEx.class, "turntable");
         ttSensor = hardwareMap.get(DigitalChannel.class, "turntable");
+        gSensor = hardwareMap.get(DistanceSensor.class, "grabberSensor");
+
         hSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turntable.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -53,9 +60,15 @@ public class Testing extends LinearOpMode{
         double output = 0;
         double ttOutput = 0;
         double ttAngle = 0;
+        double armAngle = 0;
+        double armOutput = 0;
+        hClose = hardwareMap.get(DigitalChannel.class, "hclose");
+        vClose = hardwareMap.get(DigitalChannel.class, "vclose");
+
         waitForStart();
         while(!isStopRequested()){
-            telemetry.addData("hSlide", hSlide.getCurrentPosition());
+            telemetry.addData("hclose", hClose.getState());
+            telemetry.addData("hclose", vClose.getState());
             telemetry.update();
         }
 //        while(!isStopRequested()){

@@ -16,16 +16,17 @@ import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 
 public class hSlideSubsystem extends SubsystemBase {
 
-    public double hSlideOutput = 0;
+    public double hSlideOutput = -0.2;
     private final DcMotorEx hSlide;
     private final DigitalChannel hClose;
-    private int targetPos = 0;
+    private int targetPos = -1;
     PIDCoefficients coefficients = new PIDCoefficients(SubConstants.hKp, SubConstants.hKi, SubConstants.hKd);
     BasicPID controller = new BasicPID(coefficients);
     public ElapsedTime slideTime = new ElapsedTime();
 
 
     public hSlideSubsystem(final HardwareMap hMap) {
+        register();
         hSlide =  hMap.get(DcMotorEx.class, "hslide");
         hClose = hMap.get(DigitalChannel.class, "hclose");
         hSlide.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -39,6 +40,10 @@ public class hSlideSubsystem extends SubsystemBase {
     public void hSlideSetPower(double power){
         targetPos = -1;
         hSlideOutput = power;
+    }
+    public void resetEncoder(){
+        hSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public double getSlideVelocity() { return hSlide.getVelocity();}
     public double getSlidePosition() { return hSlide.getCurrentPosition();}

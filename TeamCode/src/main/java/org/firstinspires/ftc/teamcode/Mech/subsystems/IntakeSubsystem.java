@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Mech.subsystems;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.qualcomm.robotcore.hardware.Servo;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -20,9 +22,10 @@ public class IntakeSubsystem extends SubsystemBase {
     public double armOutput = 0;
     public double armAngle = 0;
     public double grotatePos = 0;
-    public int armTargetAngle = 0;
+    public int armTargetAngle = 90;
     public boolean level = false;
     private final DcMotorEx arm;
+    private final DistanceSensor gSensor;
     PIDCoefficients coefficients = new PIDCoefficients(SubConstants.aKp, SubConstants.aKi, SubConstants.aKd);
     BasicPID controller = new BasicPID(coefficients);
     public ElapsedTime slideTime = new ElapsedTime();
@@ -31,11 +34,14 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     Grabber grabberState = Grabber.hasCone;
     public IntakeSubsystem(final HardwareMap hMap) {
+        register();
         grotate = hMap.get(Servo.class, "grotate");
         grabber = hMap.get(Servo.class, "grabber");
         arm =  hMap.get(DcMotorEx.class, "arm");
         Pot = hMap.get(AnalogInput.class, "armpot");
+        gSensor = hMap.get(DistanceSensor.class, "grabberSensor");
         armAngle = (Pot.getVoltage()-0.584)/SubConstants.degpervolt;
+        grotateToAngle(0);
     }
 
 
@@ -51,8 +57,8 @@ public class IntakeSubsystem extends SubsystemBase {
         grotatePos = 0.485+(angle*SubConstants.grotatePosPerDeg);
         grotate.setPosition(grotatePos);
     }
-    public void grotateLevel(){
-        level = true;
+    public void grotateLevel(boolean value){
+        level = value;
     }
 
 
@@ -73,6 +79,9 @@ public class IntakeSubsystem extends SubsystemBase {
         }
         return false;
     }
+    public double getDistance(){
+        return gSensor.getDistance(DistanceUnit.CM);
+    }
     public void hasCone(boolean decision){
         if(decision){grabberState = Grabber.hasCone;}
         else {grabberState = Grabber.noCone;}
@@ -86,6 +95,10 @@ public class IntakeSubsystem extends SubsystemBase {
             grotatePos = 0.485+((-armAngle)*SubConstants.grotatePosPerDeg);
             grotate.setPosition(grotatePos);
         }
+        if(getDistance()<50) {
+            grabberState = Grabber.hasCone;
+        }
+        else grabberState = Grabber.noCone;
 
     }
 
