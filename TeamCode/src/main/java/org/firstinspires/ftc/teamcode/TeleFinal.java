@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
-
-
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
@@ -16,12 +16,15 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.armDrop;
@@ -33,6 +36,7 @@ import org.firstinspires.ftc.teamcode.Mech.BaseCommands.fallenConeGrab;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.grabberOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.leveller;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDown;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tLowPole;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeGrab;
@@ -54,8 +58,24 @@ import java.util.function.BooleanSupplier;
 
 @TeleOp
 public class TeleFinal extends LinearOpMode {
+    BNO055IMU imu;
+    Orientation angles;
+    Acceleration gravity;
+
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+
     public void runOpMode() {
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
         IntakeSubsystem IntakeSub = new IntakeSubsystem(hardwareMap);
         hSlideSubsystem hSlideSub = new hSlideSubsystem(hardwareMap);
         DepositSubsystem DepositSub = new DepositSubsystem(hardwareMap);
@@ -83,20 +103,30 @@ public class TeleFinal extends LinearOpMode {
                 return IntakeSub.hasCone();
             }
         };
-        CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub);
-        mechOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenReleased(new InstantCommand(() -> {hSlideSub.hSlideSetPower(0);}))
+        CommandScheduler.getInstance().registerSubsystem(DepositSub, vSlideSub, IntakeSub, hSlideSub);
+//        CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub);
+        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenReleased(new InstantCommand(() -> {
+                    hSlideSub.hSlideSetPower(0);
+                }))
                 .whenPressed(new ConditionalCommand(new WaitCommand(0), new SequentialCommandGroup(new grabberOpen(IntakeSub), new tArmDown(IntakeSub)), hasCone))
-                .whileActiveContinuous(new InstantCommand(() -> {hSlideSub.hSlideSetPower(0.75);}));
+                .whileActiveContinuous(new InstantCommand(() -> {
+                    hSlideSub.hSlideSetPower(0.75);
+                }));
 
-        mechOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+        driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .toggleWhenPressed(new TeleConeGrab(IntakeSub, hSlideSub));
         mechOp.getGamepadButton(GamepadKeys.Button.X)
                 .toggleWhenPressed(new transfer(IntakeSub, DepositSub));
         mechOp.getGamepadButton(GamepadKeys.Button.Y)
-                .toggleWhenPressed(new SequentialCommandGroup(new tLowPole(IntakeSub), new WaitCommand(500),new grabberOpen(IntakeSub)));
+                .toggleWhenPressed(new SequentialCommandGroup(new tLowPole(IntakeSub), new WaitCommand(500), new grabberOpen(IntakeSub)));
         mechOp.getGamepadButton(GamepadKeys.Button.A)
-                .toggleWhenPressed(new SequentialCommandGroup(new tArmDown(IntakeSub), new WaitCommand(500), new grabberOpen(IntakeSub)));
+                .whenReleased(new SequentialCommandGroup(new grabberOpen(IntakeSub), new WaitCommand(200), new tArmDrop(IntakeSub)))
+                .whenPressed(new tArmDown(IntakeSub));
+        driverOp.getGamepadButton(GamepadKeys.Button.X)
+                .whenReleased(new SequentialCommandGroup(new grabberOpen(IntakeSub), new WaitCommand(250),new tArmDrop(IntakeSub), new TeleConeGrab(IntakeSub, hSlideSub)))
+                .whenPressed(new tArmDown(IntakeSub));
+//                        (new SequentialCommandGroup(new tArmDown(IntakeSub), new WaitCommand(500), new grabberOpen(IntakeSub)));
         mechOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .toggleWhenPressed(new TeleHigh(DepositSub, vSlideSub, IntakeSub));
         mechOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
@@ -105,32 +135,40 @@ public class TeleFinal extends LinearOpMode {
                 .toggleWhenPressed(new TeleDrop(DepositSub, vSlideSub));
         mechOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new fallenConeGrab(IntakeSub));
-        while((!isStopRequested()) && (!isStarted())){
+        while ((!isStopRequested()) && (!isStarted())) {
             hSlideSub.hSlideSetPower(-0.3);
             CommandScheduler.getInstance().run();
             telemetry.addLine("initialization");
             telemetry.update();
-            hSlideSub.resetEncoder();
         }
-        CommandScheduler.getInstance().schedule(new TeleOpChassis(ChassisSub));
+        hSlideSub.resetEncoder();
+//        CommandScheduler.getInstance().schedule(new TeleOpChassis(ChassisSub));
         while (!isStopRequested()) {
-            double r = Math.hypot(driverOp.getLeftY(), -driverOp.getLeftX());
-            double robotAngle = Math.atan2(-driverOp.getLeftY(), driverOp.getLeftX()) - Math.PI / 4  - (ChassisSub.getHeading());
-            double rightX = (driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)-driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER))/2;
+            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            double r = Math.hypot(driverOp.getLeftY(), driverOp.getLeftX());
+            double robotAngle = Math.atan2( driverOp.getLeftY(), driverOp.getLeftX()) - Math.PI / 4  - ((angles.firstAngle/180)*Math.PI);
+            double rightX = (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)-driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))/1.35;
             final double v1 = r * Math.cos(robotAngle) + rightX;
             final double v2 = r * Math.sin(robotAngle) - rightX;
             final double v3 = r * Math.sin(robotAngle) + rightX;
             final double v4 = r * Math.cos(robotAngle) - rightX;
 
-            if (gamepad2.left_stick_y != 0 || gamepad2.left_stick_x != 0 || gamepad2.left_trigger != 0 || gamepad2.right_trigger != 0 ) {
+            if (gamepad1.left_stick_y != 0 || gamepad1.left_stick_x != 0 || gamepad1.left_trigger != 0 || gamepad1.right_trigger != 0) {
 
                 leftFront.setPower(v1);
                 rightFront.setPower(v2);
                 leftRear.setPower(v3);
                 rightRear.setPower(v4);
             }
+            else{
+                brake();
+
+            }
             CommandScheduler.getInstance().run();
-            DepositSub.setTTPower(0.5*(mechOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)-mechOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
+            DepositSub.setTTPower(0.5 * (mechOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - mechOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
+            if (0.5 * (mechOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - mechOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))<0.05){DepositSub.turntableToAngle((int)DepositSub.getTTAngle());}
+            telemetry.addData("ArmAngle", IntakeSub.getArmAngle());
             telemetry.addData("Y", ChassisSub.getY());
             telemetry.addData("X", ChassisSub.getX());
             telemetry.addData("Heading", ChassisSub.getHeading());
@@ -140,5 +178,20 @@ public class TeleFinal extends LinearOpMode {
             telemetry.addData("acorrect postion", ChassisSub.atCorrectPosition());
             telemetry.update();
         }
+    }
+
+    public void brake() {
+
+        leftFront.setPower(0.0);
+        rightFront.setPower(0.0);
+        leftRear.setPower(0.0);
+        rightRear.setPower(0.0);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+
     }
 }

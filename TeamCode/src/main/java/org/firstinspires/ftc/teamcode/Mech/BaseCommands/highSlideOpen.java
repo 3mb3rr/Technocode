@@ -16,11 +16,13 @@ public class highSlideOpen extends CommandBase {
     }
 
     @Override
+
     public void initialize() {
         vSlideSub.vSlideToPosition(SubConstants.hPolePos);
     }
 
     @Override
+
     public boolean isFinished() {
         if((vSlideSub.getSlideVelocity()<1) || ((vSlideSub.getSlideVelocity()<5) && (vSlideSub.getSlidePosition()<(SubConstants.hPolePos+5)) && (vSlideSub.getSlidePosition()>(SubConstants.hPolePos-5))))
         {return true;}

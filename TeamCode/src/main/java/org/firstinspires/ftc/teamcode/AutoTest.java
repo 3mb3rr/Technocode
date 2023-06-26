@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperGrab;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.grabberOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.highSlideOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.leveller;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDown;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.vSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeGrab;
@@ -54,6 +56,25 @@ public class AutoTest extends LinearOpMode {
             }
         };
         CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub);
+        CommandScheduler.getInstance().schedule(
+                new SequentialCommandGroup(
+                        new tArmDown(IntakeSub),
+                        new WaitCommand(2000),
+                        new tArmDrop(IntakeSub),
+                        new WaitCommand(2000),
+
+                        new tArmDown(IntakeSub),
+                        new WaitCommand(2000),
+                        new  tArmDrop(IntakeSub),
+                        new WaitCommand(2000),
+
+                        new tArmDown(IntakeSub),
+                        new WaitCommand(2000),
+                        new  tArmDrop(IntakeSub),
+                        new WaitCommand(2000)
+
+                )
+        );
 //        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
 //                        new grabberOpen(IntakeSub),
 //                        new WaitUntilCommand(isStarted),
@@ -70,7 +91,7 @@ public class AutoTest extends LinearOpMode {
 //                new AutoConeDrop(DepositSub, vSlideSub),
 //                new AutoConeDrop(DepositSub, vSlideSub),
 //                new AutoConeDrop(DepositSub, vSlideSub)));
-        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new highSlideOpen(vSlideSub), new vSlideClose(vSlideSub)));
+//        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new highSlideOpen(vSlideSub), new vSlideClose(vSlideSub)));
         while((!isStopRequested()) && (!isStarted())){
 
             telemetry.addLine("initialization");

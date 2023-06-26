@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisContestedPole;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDown;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeExtend;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeGrab;
@@ -79,7 +81,9 @@ public class AutoFinal extends LinearOpMode {
                                 new SequentialCommandGroup(
                                         new AutoConeExtend(IntakeSub, hSlideSub),
                                         new AutoConeGrab(IntakeSub, hSlideSub, DepositCone))
-                        )
+                        ),
+                new tArmDrop(IntakeSub),
+                new AutoConeDrop(DepositSub, vSlideSub)
                 )
         );
         while (!isStopRequested()) {

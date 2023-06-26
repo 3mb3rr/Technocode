@@ -18,8 +18,10 @@ public class tArmDown extends CommandBase {
 
     @Override
     public void initialize() {
-        IntakeSub.armToAngle(-15);
-        IntakeSub.grotateToAngle(15);
+        IntakeSub.armToAngle(-16);
+        //change: -15 to -15
+        IntakeSub.grotateToAngle(16);
+        //change: 15 to
     }
 
 

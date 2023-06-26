@@ -25,9 +25,11 @@ public class TeleDrop extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                         new dropperDrop(DepositSub),
                         new depositOpen(DepositSub),
-                        new WaitCommand(100),
+                        new WaitCommand(300),
+                        //change: 100 to 300
                         new dropperGrab(DepositSub),
-                        new WaitCommand(150),
+                        new WaitCommand(200),
+                        //change 150 to 200
                         new ParallelCommandGroup(
                             new vSlideClose(vSlideSub),
                             new ttTurnMiddle(DepositSub))

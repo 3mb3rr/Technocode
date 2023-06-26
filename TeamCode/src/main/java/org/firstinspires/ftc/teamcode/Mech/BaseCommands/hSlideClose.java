@@ -19,9 +19,11 @@ public class hSlideClose extends CommandBase {
         hSlideSub.hSlideSetPower(-1);;
     }
     @Override
+
     public void end(boolean interrupted) {
-        hSlideSub.hSlideSetPower(0);
-    }
+        hSlideSub.resetEncoder();
+        hSlideSub.hSlideToPosition(0);}
+//    public void end(boolean interrupted) {hSlideSub.hSlideSetPower(0);}
 
 
     @Override

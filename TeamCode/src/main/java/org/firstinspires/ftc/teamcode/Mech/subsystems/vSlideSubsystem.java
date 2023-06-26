@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Mech.subsystems;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -29,6 +30,7 @@ public class vSlideSubsystem extends SubsystemBase {
     public vSlideSubsystem(final HardwareMap hMap) {
         register();
         vSlide =  hMap.get(DcMotorEx.class, "vslide");
+        vSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         vSlide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         vSlide.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         vClose = hMap.get(DigitalChannel.class, "vclose");
