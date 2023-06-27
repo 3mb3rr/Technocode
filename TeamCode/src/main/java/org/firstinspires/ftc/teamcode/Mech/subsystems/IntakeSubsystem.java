@@ -77,7 +77,7 @@
 
 
         public boolean hasCone() {
-            if(getDistance()<50) {
+            if(getDistance()<35) {
                 grabberState = Grabber.hasCone;
             }
             else grabberState = Grabber.noCone;
