@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+import com.outoftheboxrobotics.photoncore.PhotonCore;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -34,6 +35,7 @@ import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperDrop;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperGrab;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.fallenConeGrab;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.grabberOpen;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.leveller;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDown;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
@@ -65,7 +67,7 @@ public class TeleFinal extends LinearOpMode {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
 
     public void runOpMode() {
-
+        PhotonCore.enable();
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -124,7 +126,7 @@ public class TeleFinal extends LinearOpMode {
                 .whenReleased(new SequentialCommandGroup(new grabberOpen(IntakeSub), new WaitCommand(200), new tArmDrop(IntakeSub)))
                 .whenPressed(new tArmDown(IntakeSub));
         driverOp.getGamepadButton(GamepadKeys.Button.X)
-                .whenReleased(new SequentialCommandGroup(new grabberOpen(IntakeSub), new WaitCommand(250),new tArmDrop(IntakeSub), new TeleConeGrab(IntakeSub, hSlideSub)))
+                .whenReleased(new SequentialCommandGroup(new grabberOpen(IntakeSub), new WaitCommand(150), new ParallelCommandGroup(new tArmDrop(IntakeSub), new hSlideClose(hSlideSub))))
                 .whenPressed(new tArmDown(IntakeSub));
 //                        (new SequentialCommandGroup(new tArmDown(IntakeSub), new WaitCommand(500), new grabberOpen(IntakeSub)));
         mechOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)

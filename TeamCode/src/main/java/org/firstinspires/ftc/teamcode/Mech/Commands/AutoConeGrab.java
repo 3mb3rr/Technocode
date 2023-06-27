@@ -27,9 +27,15 @@ public class AutoConeGrab extends SequentialCommandGroup {
     }) ;
     IntakeSubsystem IntakeSubs;
 
-    public AutoConeGrab(IntakeSubsystem IntakeSub, hSlideSubsystem hSlideSub, BooleanSupplier ConeDropped)
+    public AutoConeGrab(IntakeSubsystem IntakeSub, hSlideSubsystem hSlideSub)
     {
         IntakeSubs=IntakeSub;
+        BooleanSupplier ConeDropped = new BooleanSupplier() {
+            @Override
+            public boolean getAsBoolean() {
+                return IntakeSub.depositCone();
+            }
+        };
         addCommands (
                     new WaitUntilCommand(ConeDropped),
                     new WaitCommand(1000),

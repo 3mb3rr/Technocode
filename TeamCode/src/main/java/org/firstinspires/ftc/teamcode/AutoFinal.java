@@ -56,39 +56,40 @@ public class AutoFinal extends LinearOpMode {
                         new AutoConeDrop(DepositSub, vSlideSub),
                         new SequentialCommandGroup(
                                 new AutoConeExtend(IntakeSub, hSlideSub),
-                                new AutoConeGrab(IntakeSub, hSlideSub, DepositCone))
+                                new AutoConeGrab(IntakeSub, hSlideSub))
                 ),
         new ParallelCommandGroup(
                 new AutoConeDrop(DepositSub, vSlideSub),
                 new SequentialCommandGroup(
                         new AutoConeExtend(IntakeSub, hSlideSub),
-                        new AutoConeGrab(IntakeSub, hSlideSub, DepositCone))
+                        new AutoConeGrab(IntakeSub, hSlideSub))
         ),
                         new ParallelCommandGroup(
                                 new AutoConeDrop(DepositSub, vSlideSub),
                                 new SequentialCommandGroup(
                                         new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub, DepositCone))
+                                        new AutoConeGrab(IntakeSub, hSlideSub))
                         ),
                         new ParallelCommandGroup(
                                 new AutoConeDrop(DepositSub, vSlideSub),
                                 new SequentialCommandGroup(
                                         new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub, DepositCone))
+                                        new AutoConeGrab(IntakeSub, hSlideSub))
                         ),
                         new ParallelCommandGroup(
                                 new AutoConeDrop(DepositSub, vSlideSub),
                                 new SequentialCommandGroup(
                                         new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub, DepositCone))
+                                        new AutoConeGrab(IntakeSub, hSlideSub))
                         ),
                 new tArmDrop(IntakeSub),
                 new AutoConeDrop(DepositSub, vSlideSub)
                 )
         );
         while (!isStopRequested()) {
-            running = CommandScheduler.getInstance().isScheduled(new AutoConeGrab(IntakeSub, hSlideSub, DepositCone)) || CommandScheduler.getInstance().isScheduled(new AutoConeDrop(DepositSub, vSlideSub));
+            running = CommandScheduler.getInstance().isScheduled(new AutoConeGrab(IntakeSub, hSlideSub)) || CommandScheduler.getInstance().isScheduled(new AutoConeDrop(DepositSub, vSlideSub));
             CommandScheduler.getInstance().run();
+            IntakeSub.depositCone(DepositSub.hasCone());
 //            if((SubConstants.conestackHeight!=0) && (!running)){
 //                CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
 //                    new AutoConeDrop(DepositSub, vSlideSub),
@@ -99,8 +100,11 @@ public class AutoFinal extends LinearOpMode {
 //                );
 //            }
             telemetry.addData("condition", ((SubConstants.conestackHeight!=0) && (!running)));
-            telemetry.addData("deposithascone", DepositSub.hasCone());
+            telemetry.addData("deposithascone", DepositCone.getAsBoolean());
             telemetry.addData("hclose", hSlideSub.hClose());
+            telemetry.addData("hclose", hSlideSub.hClose());
+            telemetry.addData("autoextend", CommandScheduler.getInstance().isScheduled(new AutoConeExtend(IntakeSub, hSlideSub)));
+            telemetry.addData("autograb", CommandScheduler.getInstance().isScheduled(new AutoConeGrab(IntakeSub, hSlideSub)));
             telemetry.update();
         }
 //while(!isStopRequested()){

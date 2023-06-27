@@ -25,6 +25,7 @@
         public double grotatePos = 0;
         public int armTargetAngle = 90;
         public boolean level = false;
+        public boolean depositCone = false;
         private final DcMotorEx arm;
         private final DistanceSensor gSensor;
         PIDCoefficients coefficients = new PIDCoefficients(SubConstants.aKp, SubConstants.aKi, SubConstants.aKd);
@@ -71,11 +72,15 @@
                 armTargetAngle = angle;
         }
         public void setArmPower(double power){
-            arm.setPower(power);
+            armTargetAngle=1000; armOutput=power;
         }
 
 
         public boolean hasCone() {
+            if(getDistance()<50) {
+                grabberState = Grabber.hasCone;
+            }
+            else grabberState = Grabber.noCone;
             switch (grabberState) {
                 case hasCone:
                     return true;
@@ -86,22 +91,29 @@
             return gSensor.getDistance(DistanceUnit.CM);
         }
         public void hasCone(boolean decision){
+
             if(decision){grabberState = Grabber.hasCone;}
             else {grabberState = Grabber.noCone;}
         }
+        public void depositCone(boolean decision){
+            depositCone = decision;
+        }
+
+        public boolean depositCone(){
+            return depositCone;
+        }
+
         @Override
         public void periodic(){
+            if (armTargetAngle!=1000){
             armAngle = (Pot.getVoltage()-0.584)/SubConstants.degpervolt;
-            armOutput = controller.calculate(armTargetAngle, armAngle)+(SubConstants.armFeedforward*Math.cos(Math.toRadians(armAngle)));
+            armOutput = controller.calculate(armTargetAngle, armAngle)+(SubConstants.armFeedforward*Math.cos(Math.toRadians(armAngle)));}
             arm.setPower(armOutput);
             if (level){
                 grotatePos = 0.485+((-armAngle)*SubConstants.grotatePosPerDeg);
                 grotate.setPosition(grotatePos);
             }
-            if(getDistance()<50) {
-                grabberState = Grabber.hasCone;
-            }
-            else grabberState = Grabber.noCone;
+
 
         }
 

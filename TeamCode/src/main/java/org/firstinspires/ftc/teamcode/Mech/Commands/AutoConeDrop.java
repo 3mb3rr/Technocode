@@ -27,6 +27,7 @@ public class AutoConeDrop extends SequentialCommandGroup {
                         new depositClose(DepositSub),
                         new dropperDrop(DepositSub),
                         new ParallelCommandGroup(new highSlideOpen(vSlideSub), new ttTurnRight(DepositSub)),
+                        new WaitCommand(200),
                         new depositOpen(DepositSub),
                         new InstantCommand(() -> {DepositSub.hasCone(false);}),
                         new WaitCommand(200),

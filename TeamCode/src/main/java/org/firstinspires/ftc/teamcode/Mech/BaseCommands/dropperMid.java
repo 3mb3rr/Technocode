@@ -16,6 +16,7 @@ public class dropperMid extends CommandBase {
     @Override
     public void initialize() {
         DepositSub.dropperMid();
+        DepositSub.openAligner();
     }
 
     @Override

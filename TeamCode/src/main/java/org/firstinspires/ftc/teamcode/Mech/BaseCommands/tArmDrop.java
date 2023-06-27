@@ -18,7 +18,7 @@ public class tArmDrop extends CommandBase {
 
     @Override
     public void initialize() {
-        IntakeSub.armToAngle(90);
+        IntakeSub.armToAngle(87);
         IntakeSub.grotateToAngle(0);
     }
 

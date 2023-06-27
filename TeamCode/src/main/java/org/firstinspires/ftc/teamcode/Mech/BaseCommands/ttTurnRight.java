@@ -24,7 +24,7 @@ public class ttTurnRight extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if((DepositSub.getTTVelocity()<2) && (DepositSub.getTTAngle()<(SubConstants.ttRightAngle+1.5)) && (DepositSub.getTTAngle()>(SubConstants.ttRightAngle-1.5)))
+        if((DepositSub.getTTVelocity()<2) && (DepositSub.getTTAngle()<(SubConstants.ttRightAngle+2.5)) && (DepositSub.getTTAngle()>(SubConstants.ttRightAngle-2.5)))
         {return true;}
         return false;
     }
