@@ -10,7 +10,7 @@ public class hSlideTOpen extends CommandBase {
 
     // The subsystem the command runs on
     private final hSlideSubsystem hSlideSub;
-    private int target = (SubConstants.hSlidePos[5-SubConstants.conestackHeight]);
+    private int target;
 
     public hSlideTOpen(hSlideSubsystem subsystem) {
         hSlideSub = subsystem;
