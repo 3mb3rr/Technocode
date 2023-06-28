@@ -23,18 +23,23 @@
         public double armOutput = 0;
         public double armAngle = 0;
         public double grotatePos = 0;
-        public int armTargetAngle = 90;
+        public double armTargetAngle = 90;
         public boolean level = false;
         public boolean depositCone = false;
         private final DcMotorEx arm;
         private final DistanceSensor gSensor;
+        public boolean grabfailed = false;
         PIDCoefficients coefficients = new PIDCoefficients(SubConstants.aKp, SubConstants.aKi, SubConstants.aKd);
         BasicPID controller = new BasicPID(coefficients);
         public ElapsedTime slideTime = new ElapsedTime();
         public enum Grabber {
             hasCone, noCone
         }
-        Grabber grabberState = Grabber.hasCone;
+        public enum Arm {
+            dropping, grabbing, holding
+        }
+        public Grabber grabberState = Grabber.hasCone;
+        public Arm armState = Arm.holding;
         public IntakeSubsystem(final HardwareMap hMap) {
             register();
             grotate = hMap.get(Servo.class, "grotate");
@@ -68,7 +73,7 @@
 
         public double getArmVelocity() { return arm.getVelocity();}
         public double getArmAngle() { return armAngle;}
-        public void armToAngle(int angle) {
+        public void armToAngle(double angle) {
                 armTargetAngle = angle;
         }
         public void setArmPower(double power){
@@ -110,7 +115,7 @@
             armOutput = controller.calculate(armTargetAngle, armAngle)+(SubConstants.armFeedforward*Math.cos(Math.toRadians(armAngle)));}
             arm.setPower(armOutput);
             if (level){
-                grotatePos = 0.485+((-armAngle)*SubConstants.grotatePosPerDeg);
+                grotatePos = 0.48+((-armAngle)*SubConstants.grotatePosPerDeg);
                 grotate.setPosition(grotatePos);
             }
 

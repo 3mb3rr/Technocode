@@ -15,11 +15,16 @@ public class ChassisSubsystem extends SubsystemBase {
     public boolean auto = true;
     public Pose2d robotPos = new Pose2d(0, 0, 0);
     public Pose2d expectedPos=robotPos;
+    public boolean holdingTemp = true; // its a random variable used for the holding(insignificant)
     public Trajectory t1;
     double x, y, turn;
     double xf, yf, turnf;
 
     SampleMecanumDrive drive;
+    public enum chassis{
+        driving, holding
+    }
+    public chassis chassisState = chassis.holding;
     public ChassisSubsystem(final HardwareMap hMap) {
         register();
         drive = new SampleMecanumDrive(hMap);
@@ -28,20 +33,20 @@ public class ChassisSubsystem extends SubsystemBase {
     public void moveTo(Pose2d targetPos1){
         expectedPos=targetPos1;
         t1 = drive.trajectoryBuilder(robotPos)
-                .splineToSplineHeading(targetPos1, Math.toRadians(0))
+                .lineToLinearHeading(targetPos1)
                 .build();
         drive.followTrajectoryAsync(t1);
     }
     public void moveTo(Pose2d targetPos1, Pose2d targetPos2){
         expectedPos=targetPos2;
         Trajectory t1 = drive.trajectoryBuilder(robotPos)
-                .splineToSplineHeading(targetPos1, Math.toRadians(0))
-                .splineToSplineHeading(targetPos2, Math.toRadians(0))
+                .lineToLinearHeading(targetPos1)
+                .lineToLinearHeading(targetPos2)
                 .build();
         drive.followTrajectoryAsync(t1);
     }
     public boolean atCorrectPosition(){
-        if((getX()<(egetX()+0.7)) && (getX()>(egetX()-0.7)) && (getY()>(egetY()-0.7)) && (getY()<(egetY()+0.7)) && (getHeading()>(egetHeading()-0.7))&& (getHeading()<(egetHeading()+0.7))){
+        if((getX()<(egetX()+0.5)) && (getX()>(egetX()-0.5)) && (getY()>(egetY()-0.5)) && (getY()<(egetY()+0.5)) && (getHeading()>(egetHeading()-0.7))&& (getHeading()<(egetHeading()+0.7))){
                 return true;
         }
         return false;
@@ -64,26 +69,18 @@ public class ChassisSubsystem extends SubsystemBase {
     public double egetHeading(){
         return Math.toDegrees(expectedPos.getHeading());
     }
-    public void setTelePower(double xi, double yi, double turni){
-        x=xi;
-        y=yi;
-        turn=turni;
-    }
-    public void TeleOp(){
-        xf=-(x*Math.cos(-getHeading())-y*Math.sin(-getHeading()));
-        yf=-(x*Math.sin(-getHeading())+y*Math.cos(-getHeading()));
-        drive.setWeightedDrivePower(
-                new Pose2d(
-                        yf,
-                        xf,
-                        -turn
-                )
-        );
 
-    }
+
     @Override
     public void periodic(){
         drive.update();
         robotPos = drive.getPoseEstimate();
+        switch(chassisState) {
+            case holding:
+                if(holdingTemp){moveTo(new Pose2d((egetX()+0.0001), egetY(), egetHeading()));}
+                else{moveTo(expectedPos);}
+
+        }
+
     }
 }

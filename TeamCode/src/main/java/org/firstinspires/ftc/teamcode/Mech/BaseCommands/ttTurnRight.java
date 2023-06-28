@@ -18,8 +18,13 @@ public class ttTurnRight extends CommandBase {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
             DepositSub.turntableToAngle(SubConstants.ttRightAngle);
+        DepositSub.ttState = DepositSub.ttState.turning;
+    }
+    @Override
+    public void end(boolean interrupted) {
+        DepositSub.ttState = DepositSub.ttState.holding;
     }
 
     @Override

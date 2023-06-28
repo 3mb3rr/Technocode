@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
 
+import org.checkerframework.checker.units.qual.degrees;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 
 public class DepositSubsystem extends SubsystemBase {
@@ -18,6 +19,7 @@ public class DepositSubsystem extends SubsystemBase {
     private final Servo aligner, deposit, dropper;
     public double ttOutput = 0;
     public double ttAngle = 0;
+    public double targetTTAngle = 0;
     private final DcMotorEx turntable;
     PIDCoefficients coefficients = new PIDCoefficients(SubConstants.tKp, SubConstants.tKi, SubConstants.tKd);
     BasicPID controller = new BasicPID(coefficients);
@@ -25,7 +27,11 @@ public class DepositSubsystem extends SubsystemBase {
     public enum Deposit {
         hasCone, noCone
     }
+    public enum Turntable {
+        turning, holding
+    }
     Deposit depositState = Deposit.hasCone;
+    public Turntable ttState = Turntable.holding;
     public DepositSubsystem(final HardwareMap hMap) {
         register();
         aligner = hMap.get(Servo.class, "aligner");
@@ -43,11 +49,10 @@ public class DepositSubsystem extends SubsystemBase {
 
 
     public void turntableToAngle(int degrees){
-        ttAngle = (turntable.getCurrentPosition()*SubConstants.degspertick);
-        ttOutput = controller.calculate(degrees, ttAngle);
-        turntable.setPower(ttOutput);
+        targetTTAngle = degrees;
     }
     public void setTTPower(double power){
+        targetTTAngle = 1000;
         turntable.setPower(power);
     }
     public void openAligner(){
@@ -88,4 +93,15 @@ public class DepositSubsystem extends SubsystemBase {
         if(decision){depositState = Deposit.hasCone;}
         else {depositState = Deposit.noCone;}
     }
+    @Override
+    public void periodic(){
+        if (targetTTAngle!=1000){
+            ttAngle = (turntable.getCurrentPosition()*SubConstants.degspertick);
+            ttOutput = controller.calculate(targetTTAngle, ttAngle);
+            turntable.setPower(ttOutput);}
+
+
+
+    }
+
 }

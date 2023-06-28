@@ -17,10 +17,14 @@ public class armDrop extends CommandBase {
     }
     @Override
     public void initialize() {
+        IntakeSub.armState = IntakeSubsystem.Arm.grabbing;
         IntakeSub.grotateToAngle(80);
-        IntakeSub.armToAngle(85);
+        IntakeSub.armToAngle(82);
     }
-
+    @Override
+    public void end(boolean interrupted) {
+        IntakeSub.armState = IntakeSubsystem.Arm.holding;
+    }
     @Override
     public boolean isFinished() {
         if((IntakeSub.getArmVelocity()<1) && (IntakeSub.getArmAngle()>84))

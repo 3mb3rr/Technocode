@@ -18,6 +18,11 @@ public class MediumSlideOpen extends CommandBase {
     @Override
     public void initialize() {
         vSlideSub.vSlideToPosition(SubConstants.mPolePos);
+        vSlideSub.vSlideState = vSlideSubsystem.VSlide.extending;
+    }
+    @Override
+    public void end(boolean interrupted) {
+        vSlideSub.vSlideState = vSlideSubsystem.VSlide.holding;
     }
 
     @Override

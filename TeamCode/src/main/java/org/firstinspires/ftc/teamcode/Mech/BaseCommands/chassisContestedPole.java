@@ -17,8 +17,14 @@ public class chassisContestedPole extends CommandBase {
 
     @Override
     public void initialize() {
-        ChassisSub.moveTo((new Pose2d(-27, 0, Math.toRadians(0))), (new Pose2d(-50, 2, Math.toRadians(88.5))));
+        ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
+        ChassisSub.moveTo((new Pose2d(-50, 2, Math.toRadians(0))), (new Pose2d(-50, 2, Math.toRadians(88.5))));
     }
+    @Override
+    public void end(boolean interrupted) {
+        ChassisSub.chassisState = ChassisSubsystem.chassis.holding;
+    }
+
 
     @Override
     public boolean isFinished() {

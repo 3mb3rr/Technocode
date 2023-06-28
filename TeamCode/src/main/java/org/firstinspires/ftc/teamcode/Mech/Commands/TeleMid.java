@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.MediumSlideOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.depositClose;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperMid;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
@@ -34,6 +35,7 @@ public class TeleMid extends SequentialCommandGroup {
         };
         addCommands (new ConditionalCommand(
                 new SequentialCommandGroup(
+                        new tArmDrop(IntakeSub),
                         new depositClose(DepositSub),
                         new dropperMid(DepositSub),
                         new MediumSlideOpen(vSlideSub)
@@ -41,6 +43,7 @@ public class TeleMid extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                         new transfer(IntakeSub, DepositSub),
                         new WaitCommand(200),
+                        new tArmDrop(IntakeSub),
                         new depositClose(DepositSub),
                         new dropperMid(DepositSub),
                         new MediumSlideOpen(vSlideSub)

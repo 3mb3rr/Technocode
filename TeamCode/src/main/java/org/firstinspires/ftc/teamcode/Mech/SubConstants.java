@@ -51,16 +51,15 @@ public class SubConstants {
     public static double grabberClose = 0.5;
 //    public static double grabberClose = 0.5;
     public static double armFeedforward = 0.2;
+    // 0.2
     public static double degpervolt=(1.423-0.584)/90;
 
     public static double degspertick=360/(537.7*3);
     public static double grotatePosPerDeg=0.0038;
     public static int[] armAngle = {8, 0 , -4, -14, -18};
     //change: 10 to 8, 6 t0 6, 0 to 0,-13 to -12,3-15 TO -14
-    public static int[] hSlidePos = {450, 465, 465, 475, 480, 480
-
-
-    };
+//    public static int[] hSlidePos = {450, 465, 465, 475, 480, 480};
     // 460, 465, 460, 465, 470
+    public static int hSlidePos = 430;
     public static int conestackHeight = 5;
 }

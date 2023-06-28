@@ -2,37 +2,38 @@ package org.firstinspires.ftc.teamcode.Mech.BaseCommands;
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
+
 import org.firstinspires.ftc.teamcode.Mech.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.hSlideSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 
-public class tArmDown extends CommandBase {
+public class slideToConestack extends CommandBase {
 
     // The subsystem the command runs on
+    private final hSlideSubsystem hSlideSub;
     private final IntakeSubsystem IntakeSub;
 
-    public tArmDown(IntakeSubsystem subsystem) {
-        IntakeSub = subsystem;
-        addRequirements(IntakeSub);
+    public slideToConestack(hSlideSubsystem subsystem, IntakeSubsystem subsystem2) {
+        hSlideSub = subsystem;
+        IntakeSub = subsystem2;
+        addRequirements(hSlideSub);
     }
 
     @Override
     public void initialize() {
-        IntakeSub.armState = IntakeSubsystem.Arm.grabbing;
-        IntakeSub.armToAngle(-16);
-        //change: -15 to -15
-        IntakeSub.grotateToAngle(16);
-        //change: 15 to
+        hSlideSub.hSlideState = hSlideSubsystem.HSlide.extending;
+        hSlideSub.hSlideSetPower(0.5);
     }
 
     @Override
     public void end(boolean interrupted) {
-        IntakeSub.armState = IntakeSubsystem.Arm.holding;
+        hSlideSub.hSlideToPosition((int)hSlideSub.getSlidePosition());
+        hSlideSub.hSlideState = hSlideSubsystem.HSlide.holding;
     }
+
     @Override
     public boolean isFinished() {
-        if(((IntakeSub.getArmVelocity()<1) && (IntakeSub.getArmAngle()<-17) && (IntakeSub.getArmAngle()>-15))
-                || (IntakeSub.getArmVelocity()==0))
+        if((hSlideSub.getSlideVelocity()<2) || (hSlideSub.slideCurrentSpike()) || (IntakeSub.hasCone()))
         {return true;}
         return false;
     }

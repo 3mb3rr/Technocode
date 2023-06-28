@@ -18,10 +18,14 @@ public class fallenConeGrab extends CommandBase {
 
     @Override
     public void initialize() {
+            IntakeSub.armState = IntakeSubsystem.Arm.grabbing;
         IntakeSub.armToAngle(0);
         IntakeSub.grotateToAngle(-90);
     }
-
+    @Override
+    public void end(boolean interrupted) {
+        IntakeSub.armState = IntakeSubsystem.Arm.holding;
+    }
 
     @Override
     public boolean isFinished() {

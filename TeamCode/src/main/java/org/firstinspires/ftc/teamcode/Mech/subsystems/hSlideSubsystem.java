@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mech.subsystems;
 
+import android.transition.Slide;
+
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,7 +26,10 @@ public class hSlideSubsystem extends SubsystemBase {
     BasicPID controller = new BasicPID(coefficients);
     public ElapsedTime slideTime = new ElapsedTime();
 
-
+    public enum HSlide {
+        extending, retracting, holding, jammed
+    }
+    public HSlide hSlideState = HSlide.holding;
     public hSlideSubsystem(final HardwareMap hMap) {
         register();
         hSlide =  hMap.get(DcMotorEx.class, "hslide");
@@ -56,6 +61,9 @@ public class hSlideSubsystem extends SubsystemBase {
             hSlideOutput = controller.calculate(targetPos, hSlide.getCurrentPosition());
         }
         hSlide.setPower(hSlideOutput);
+        if(slideCurrentSpike() && (getSlideVelocity()<2) && (getSlidePosition()>50)){
+            hSlideState = HSlide.jammed;
+        }
 
     }
 

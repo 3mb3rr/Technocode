@@ -26,6 +26,10 @@ public class vSlideSubsystem extends SubsystemBase {
     public enum Deposit {
         hasCone, noCone
     }
+    public enum VSlide {
+        extending, retracting, holding
+    }
+    public VSlide vSlideState = VSlide.holding;
     Deposit depositState = Deposit.hasCone;
     public vSlideSubsystem(final HardwareMap hMap) {
         register();
@@ -42,6 +46,10 @@ public class vSlideSubsystem extends SubsystemBase {
     public void setPower(double Power){
         targetPos = -1;
         vSlideOutput = Power;
+    }
+    public void resetEncoder(){
+        vSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        vSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public double getSlideVelocity() { return vSlide.getVelocity();}
     public double getSlidePosition() { return vSlide.getCurrentPosition();}

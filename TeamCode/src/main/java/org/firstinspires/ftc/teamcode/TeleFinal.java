@@ -42,6 +42,7 @@ import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tLowPole;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeGrab;
+import org.firstinspires.ftc.teamcode.Mech.Commands.Cycle;
 import org.firstinspires.ftc.teamcode.Mech.Commands.TeleConeGrab;
 import org.firstinspires.ftc.teamcode.Mech.Commands.TeleDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.TeleHigh;
@@ -67,7 +68,7 @@ public class TeleFinal extends LinearOpMode {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
 
     public void runOpMode() {
-        PhotonCore.enable();
+//        PhotonCore.enable();
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -137,6 +138,8 @@ public class TeleFinal extends LinearOpMode {
                 .toggleWhenPressed(new TeleDrop(DepositSub, vSlideSub));
         mechOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new fallenConeGrab(IntakeSub));
+        driverOp.getGamepadButton(GamepadKeys.Button.B)
+                .toggleWhenPressed(new Cycle(DepositSub, vSlideSub, IntakeSub, hSlideSub));
         while ((!isStopRequested()) && (!isStarted())) {
             hSlideSub.hSlideSetPower(-0.3);
             CommandScheduler.getInstance().run();
@@ -146,6 +149,7 @@ public class TeleFinal extends LinearOpMode {
         hSlideSub.resetEncoder();
 //        CommandScheduler.getInstance().schedule(new TeleOpChassis(ChassisSub));
         while (!isStopRequested()) {
+            IntakeSub.depositCone(DepositSub.hasCone());
             imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             double r = Math.hypot(driverOp.getLeftY(), driverOp.getLeftX());
@@ -168,16 +172,24 @@ public class TeleFinal extends LinearOpMode {
 
             }
             CommandScheduler.getInstance().run();
+            if((driverOp.getRightY()>0.1) || (driverOp.getRightY()<-0.1)){
+                IntakeSub.grotateLevel(true);
+                IntakeSub.armToAngle(IntakeSub.armTargetAngle+ driverOp.getRightY());
+            }
             DepositSub.setTTPower(0.5 * (mechOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - mechOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
             if (0.5 * (mechOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - mechOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))<0.05){DepositSub.turntableToAngle((int)DepositSub.getTTAngle());}
             telemetry.addData("ArmAngle", IntakeSub.getArmAngle());
+            telemetry.addData("ArmTargetAngle", IntakeSub.armTargetAngle);
             telemetry.addData("Y", ChassisSub.getY());
             telemetry.addData("X", ChassisSub.getX());
             telemetry.addData("Heading", ChassisSub.getHeading());
             telemetry.addData("eY", ChassisSub.egetY());
             telemetry.addData("eX", ChassisSub.egetX());
             telemetry.addData("eHeading", ChassisSub.egetHeading());
+            telemetry.addData("joystick", driverOp.getRightY());
             telemetry.addData("acorrect postion", ChassisSub.atCorrectPosition());
+            telemetry.addData("joystick", driverOp.getRightY());
+            telemetry.addData("depositCone", IntakeSub.depositCone());
             telemetry.update();
         }
     }
