@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
+import org.firstinspires.ftc.teamcode.Mech.subsystems.IntakeSubsystem;
 
 @TeleOp
 public class Testing extends LinearOpMode{
@@ -46,6 +47,7 @@ public class Testing extends LinearOpMode{
         turntable = hardwareMap.get(DcMotorEx.class, "turntable");
         ttSensor = hardwareMap.get(DigitalChannel.class, "turntable");
         gSensor = hardwareMap.get(DistanceSensor.class, "grabberSensor");
+        IntakeSubsystem IntakeSub = new IntakeSubsystem(hardwareMap);
 
         hSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -67,8 +69,7 @@ public class Testing extends LinearOpMode{
 
         waitForStart();
         while(!isStopRequested()){
-            telemetry.addData("hclose", hClose.getState());
-            telemetry.addData("hclose", vClose.getState());
+            telemetry.addData("distance", IntakeSub.getDistance());
             telemetry.update();
         }
 //        while(!isStopRequested()){

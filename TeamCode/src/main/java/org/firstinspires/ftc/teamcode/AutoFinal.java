@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisContestedPole;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDown;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeDrop;
@@ -45,13 +47,13 @@ public class AutoFinal extends LinearOpMode {
                 return DepositSub.hasCone();
             }
         };
+        CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub);
+        CommandScheduler.getInstance().schedule(new hSlideClose(hSlideSub));
         while((!isStopRequested()) && (!isStarted())){
-            hSlideSub.hSlideSetPower(-0.3);
+            CommandScheduler.getInstance().run();
             telemetry.addLine("initialization");
             telemetry.update();
-            hSlideSub.resetEncoder();
         }
-        CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub);
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new ParallelCommandGroup(
                         new AutoConeDrop(DepositSub, vSlideSub),
                         new SequentialCommandGroup(
@@ -99,10 +101,13 @@ public class AutoFinal extends LinearOpMode {
 //                )
 //                );
 //            }
+            telemetry.addData("grabberCone", IntakeSub.hasCone());
             telemetry.addData("condition", ((SubConstants.conestackHeight!=0) && (!running)));
-            telemetry.addData("deposithascone", DepositCone.getAsBoolean());
+            telemetry.addData("deposithascone", IntakeSub.depositCone());
             telemetry.addData("hclose", hSlideSub.hClose());
             telemetry.addData("hclose", hSlideSub.hClose());
+            telemetry.addData("armState", IntakeSub.armState);
+            telemetry.addData("hslideState", hSlideSub.hSlideState);
             telemetry.addData("autoextend", CommandScheduler.getInstance().isScheduled(new AutoConeExtend(IntakeSub, hSlideSub)));
             telemetry.addData("autograb", CommandScheduler.getInstance().isScheduled(new AutoConeGrab(IntakeSub, hSlideSub)));
             telemetry.update();

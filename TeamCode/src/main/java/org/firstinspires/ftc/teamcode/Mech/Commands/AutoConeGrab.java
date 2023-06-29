@@ -35,7 +35,7 @@ public class AutoConeGrab extends SequentialCommandGroup {
         BooleanSupplier DepConeDropped = new BooleanSupplier() {
             @Override
             public boolean getAsBoolean() {
-                return IntakeSub.depositCone();
+                return !IntakeSub.depositCone();
             }
         };
         BooleanSupplier IntakeConeDrop = new BooleanSupplier() {
@@ -50,8 +50,27 @@ public class AutoConeGrab extends SequentialCommandGroup {
                 return (!IntakeSub.hasCone() && IntakeSub.grabfailed);
             }
         };
-
         addCommands (
+                new WaitUntilCommand(DepConeDropped),
+                new slideToConestack(hSlideSub, IntakeSub),
+                new grabberGrab(IntakeSub),
+                new WaitCommand(400),
+                new ParallelCommandGroup(
+                        new armDrop(IntakeSub),
+                        new hSlideClose(hSlideSub),
+                        new InstantCommand(() ->{
+                            SubConstants.conestackHeight--;
+                        })
+                ),
+                new grabberOpen(IntakeSub),
+                new WaitCommand(200)
+        );
+
+        addRequirements(IntakeSub);
+    }
+
+}
+/*         addCommands (
                     new WaitUntilCommand(DepConeDropped),
                     new slideToConestack(hSlideSub, IntakeSub),
                     new grabberGrab(IntakeSub),
@@ -77,8 +96,4 @@ public class AutoConeGrab extends SequentialCommandGroup {
                                     new grabberOpen(IntakeSub), new WaitCommand(200)),
                             IntakeConeDrop)
 
-        );
-        addRequirements(IntakeSub);
-    }
-
-}
+        );*/

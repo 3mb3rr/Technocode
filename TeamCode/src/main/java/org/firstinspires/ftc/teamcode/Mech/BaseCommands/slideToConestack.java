@@ -33,7 +33,7 @@ public class slideToConestack extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if((hSlideSub.getSlideVelocity()<2) || (hSlideSub.slideCurrentSpike()) || (IntakeSub.hasCone()))
+        if((hSlideSub.slideCurrentSpike()) || (IntakeSub.hasCone()))
         {return true;}
         return false;
     }

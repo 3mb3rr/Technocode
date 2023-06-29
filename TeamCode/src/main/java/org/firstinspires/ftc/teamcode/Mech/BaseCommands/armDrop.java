@@ -17,7 +17,7 @@ public class armDrop extends CommandBase {
     }
     @Override
     public void initialize() {
-        IntakeSub.armState = IntakeSubsystem.Arm.grabbing;
+        IntakeSub.armState = IntakeSubsystem.Arm.dropping;
         IntakeSub.grotateToAngle(80);
         IntakeSub.armToAngle(82);
     }

@@ -138,8 +138,8 @@ public class TeleFinal extends LinearOpMode {
                 .toggleWhenPressed(new TeleDrop(DepositSub, vSlideSub));
         mechOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new fallenConeGrab(IntakeSub));
-        driverOp.getGamepadButton(GamepadKeys.Button.B)
-                .toggleWhenPressed(new Cycle(DepositSub, vSlideSub, IntakeSub, hSlideSub));
+//        driverOp.getGamepadButton(GamepadKeys.Button.B)
+//                .toggleWhenPressed(new Cycle(DepositSub, vSlideSub, IntakeSub, hSlideSub));
         while ((!isStopRequested()) && (!isStarted())) {
             hSlideSub.hSlideSetPower(-0.3);
             CommandScheduler.getInstance().run();

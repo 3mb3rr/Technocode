@@ -26,7 +26,7 @@ public class SubConstants {
 // 0.028 to 0.026
     public static double aKi = 0;
 
-    public static double aKd = 0.01;
+    public static double aKd = 0.02;
 
     public static int hPolePos = 1000;
     public static int mPolePos = 400;

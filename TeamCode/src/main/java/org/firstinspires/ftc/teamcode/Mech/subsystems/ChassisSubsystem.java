@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 public class ChassisSubsystem extends SubsystemBase {
@@ -19,22 +21,29 @@ public class ChassisSubsystem extends SubsystemBase {
     public Trajectory t1;
     double x, y, turn;
     double xf, yf, turnf;
-
+    double lastTime = -1;
+    boolean trajectoryCompleted = true;
     SampleMecanumDrive drive;
     public enum chassis{
-        driving, holding
+        driving, holding, tDriving
     }
+    public ElapsedTime timer = new ElapsedTime();
     public chassis chassisState = chassis.holding;
     public ChassisSubsystem(final HardwareMap hMap) {
         register();
         drive = new SampleMecanumDrive(hMap);
     }
 
+
     public void moveTo(Pose2d targetPos1){
         expectedPos=targetPos1;
         t1 = drive.trajectoryBuilder(robotPos)
                 .lineToLinearHeading(targetPos1)
+                .addDisplacementMarker(() -> {
+                    trajectoryCompleted = true;
+                })
                 .build();
+        trajectoryCompleted = false;
         drive.followTrajectoryAsync(t1);
     }
     public void moveTo(Pose2d targetPos1, Pose2d targetPos2){
@@ -42,7 +51,11 @@ public class ChassisSubsystem extends SubsystemBase {
         Trajectory t1 = drive.trajectoryBuilder(robotPos)
                 .lineToLinearHeading(targetPos1)
                 .lineToLinearHeading(targetPos2)
+                .addDisplacementMarker(() -> {
+                    trajectoryCompleted = true;
+                })
                 .build();
+        trajectoryCompleted = false;
         drive.followTrajectoryAsync(t1);
     }
     public boolean atCorrectPosition(){
@@ -77,8 +90,10 @@ public class ChassisSubsystem extends SubsystemBase {
         robotPos = drive.getPoseEstimate();
         switch(chassisState) {
             case holding:
-                if(holdingTemp){moveTo(new Pose2d((egetX()+0.0001), egetY(), egetHeading()));}
-                else{moveTo(expectedPos);}
+                if((timer.milliseconds()>(lastTime+500)) && (trajectoryCompleted)){
+                    lastTime= timer.milliseconds();
+                if(holdingTemp){moveTo(new Pose2d((egetX()+0.000001), egetY(), egetHeading()));}
+                else{moveTo(expectedPos);}}
 
         }
 
