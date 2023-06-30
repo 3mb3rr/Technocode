@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mech.BaseCommands;
+package org.firstinspires.ftc.teamcode.Mech.Commands;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandBase;
 
@@ -18,7 +18,9 @@ public class chassisContestedPole extends CommandBase {
     @Override
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
+        if(ChassisSub.BLorRR)
         ChassisSub.moveTo(new Pose2d(-50, 4, Math.toRadians(0)), 91);
+        else ChassisSub.moveTo(new Pose2d(-50, -4, Math.toRadians(0)), -91);
     }
     @Override
     public void execute() {

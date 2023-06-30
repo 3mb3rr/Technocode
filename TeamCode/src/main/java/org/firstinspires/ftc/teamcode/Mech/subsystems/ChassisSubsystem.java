@@ -35,6 +35,7 @@ public class ChassisSubsystem extends SubsystemBase {
     }
     public ElapsedTime timer = new ElapsedTime();
     public chassis chassisState = chassis.holding;
+    public boolean BLorRR = false;
     public ChassisSubsystem(final HardwareMap hMap) {
         register();
         drive = new SampleMecanumDrive(hMap);

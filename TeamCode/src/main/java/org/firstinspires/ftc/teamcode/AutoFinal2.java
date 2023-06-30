@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 import java.util.function.BooleanSupplier;
 
 @Autonomous
-public class AutoFinal extends LinearOpMode {
+public class AutoFinal2 extends LinearOpMode {
 
     public Servo grotate;
     public boolean running = true;
@@ -41,7 +41,6 @@ public class AutoFinal extends LinearOpMode {
         IntakeSubsystem IntakeSub = new IntakeSubsystem(hardwareMap);
         hSlideSubsystem hSlideSub = new hSlideSubsystem(hardwareMap);
         ChassisSubsystem ChassisSub = new ChassisSubsystem(hardwareMap);
-        ChassisSub.BLorRR = true;
         Camera camera = new Camera(hardwareMap);
         CommandScheduler.getInstance().reset();
         SubConstants.conestackHeight = 5;
@@ -70,12 +69,6 @@ public class AutoFinal extends LinearOpMode {
                                 new AutoConeExtend(IntakeSub, hSlideSub),
                                 new AutoConeGrab(IntakeSub, hSlideSub))
                 ),
-        new ParallelCommandGroup(
-                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                new SequentialCommandGroup(
-                        new AutoConeExtend(IntakeSub, hSlideSub),
-                        new AutoConeGrab(IntakeSub, hSlideSub))
-        ),
                         new ParallelCommandGroup(
                                 new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
                                 new SequentialCommandGroup(
@@ -94,11 +87,17 @@ public class AutoFinal extends LinearOpMode {
                                         new AutoConeExtend(IntakeSub, hSlideSub),
                                         new AutoConeGrab(IntakeSub, hSlideSub))
                         ),
-                new tArmDrop(IntakeSub),
-                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR)
+                        new ParallelCommandGroup(
+                                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                                new SequentialCommandGroup(
+                                        new AutoConeExtend(IntakeSub, hSlideSub),
+                                        new AutoConeGrab(IntakeSub, hSlideSub))
+                        ),
+                        new tArmDrop(IntakeSub),
+                        new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR)
                 )
-        ).withTimeout(26500),
-        new park(ChassisSub, camera.parkingZone));
+                ).withTimeout(26500),
+                new park(ChassisSub, camera.parkingZone));
         while (!isStopRequested()) {
             CommandScheduler.getInstance().run();
             IntakeSub.depositCone(DepositSub.hasCone());
