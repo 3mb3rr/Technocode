@@ -54,7 +54,7 @@ public class AutoFinal extends LinearOpMode {
             telemetry.addLine("initialization");
             telemetry.update();
         }
-        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new ParallelCommandGroup(
+        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new chassisContestedPole(ChassisSub), new ParallelCommandGroup(
                         new AutoConeDrop(DepositSub, vSlideSub),
                         new SequentialCommandGroup(
                                 new AutoConeExtend(IntakeSub, hSlideSub),

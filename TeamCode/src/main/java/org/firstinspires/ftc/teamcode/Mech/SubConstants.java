@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.Mech;
 public class SubConstants {
 
-    public static double vKp = 0.008;
+    public static double vKp = 0.007;
     // change : 0.014, 0.0110
 
-    public static double vKi = 0.0;
+    public static double vKi = 0.0005;
 //    public static double vKi = 0.0002;
 
-    public static double vKd = 0.004;
+    public static double vKd = 0.002;
 //    increase vkd in case of oscillation
 //    public static double vKd = 0.01;
     public static double tKp = 0.015;
@@ -31,7 +31,7 @@ public class SubConstants {
     public static int hPolePos = 1000;
     public static int mPolePos = 400;
 
-    public static int ttRightAngle = -45;
+    public static int ttRightAngle = -48;
     //change -53 to -45
 
     public static double dropperDrop = 0.29;
@@ -56,10 +56,10 @@ public class SubConstants {
 
     public static double degspertick=360/(537.7*3);
     public static double grotatePosPerDeg=0.0038;
-    public static int[] armAngle = {8, 0 , -4, -14, -18};
+    public static int[] armAngle = {10, 2 , -4, -11, -15};
     //change: 10 to 8, 6 t0 6, 0 to 0,-13 to -12,3-15 TO -14
 //    public static int[] hSlidePos = {450, 465, 465, 475, 480, 480};
     // 460, 465, 460, 465, 470
-    public static int hSlidePos = 430;
+    public static int hSlidePos = 330;
     public static int conestackHeight = 5;
 }

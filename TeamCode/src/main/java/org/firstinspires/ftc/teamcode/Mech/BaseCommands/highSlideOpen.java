@@ -28,7 +28,7 @@ public class highSlideOpen extends CommandBase {
     }
 
     public boolean isFinished() {
-        if((vSlideSub.getSlideVelocity()<1) || ((vSlideSub.getSlideVelocity()<5) && (vSlideSub.getSlidePosition()<(SubConstants.hPolePos+5)) && (vSlideSub.getSlidePosition()>(SubConstants.hPolePos-5))))
+        if(((vSlideSub.getSlideVelocity()<0.5) && (vSlideSub.getSlidePosition()>500))||((vSlideSub.getSlideVelocity()<2) && (vSlideSub.getSlidePosition()<(SubConstants.hPolePos+2)) && (vSlideSub.getSlidePosition()>(SubConstants.hPolePos-2))))
         {return true;}
         return false;
     }

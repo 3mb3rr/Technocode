@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mech.subsystems;
 
+import android.transition.Slide;
+
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 
 public class vSlideSubsystem extends SubsystemBase {
@@ -53,7 +56,7 @@ public class vSlideSubsystem extends SubsystemBase {
     }
     public double getSlideVelocity() { return vSlide.getVelocity();}
     public double getSlidePosition() { return vSlide.getCurrentPosition();}
-    public boolean slideCurrentSpike() { return vSlide.isOverCurrent();}
+    public boolean slideCurrentSpike() { return (vSlide.getCurrent(CurrentUnit.AMPS)>5);}
     public boolean vClose() { return
             !vClose.getState();}
 
@@ -62,7 +65,7 @@ public class vSlideSubsystem extends SubsystemBase {
         if (targetPos!=-1){
             vSlideOutput = controller.calculate(targetPos, vSlide.getCurrentPosition());
         }
-        vSlide.setPower(vSlideOutput+0.15);
+        vSlide.setPower(vSlideOutput+0.1);
     }
 
 }

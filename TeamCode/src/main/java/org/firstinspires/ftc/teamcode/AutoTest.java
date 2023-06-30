@@ -56,25 +56,7 @@ public class AutoTest extends LinearOpMode {
             }
         };
         CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub);
-        CommandScheduler.getInstance().schedule(
-                new SequentialCommandGroup(
-                        new tArmDown(IntakeSub),
-                        new WaitCommand(2000),
-                        new tArmDrop(IntakeSub),
-                        new WaitCommand(2000),
 
-                        new tArmDown(IntakeSub),
-                        new WaitCommand(2000),
-                        new  tArmDrop(IntakeSub),
-                        new WaitCommand(2000),
-
-                        new tArmDown(IntakeSub),
-                        new WaitCommand(2000),
-                        new  tArmDrop(IntakeSub),
-                        new WaitCommand(2000)
-
-                )
-        );
 //        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
 //                        new grabberOpen(IntakeSub),
 //                        new WaitUntilCommand(isStarted),
@@ -97,11 +79,22 @@ public class AutoTest extends LinearOpMode {
             telemetry.addLine("initialization");
             telemetry.update();
         }
+        CommandScheduler.getInstance().schedule(new chassisContestedPole(ChassisSub));
         while (!isStopRequested()) {
             CommandScheduler.getInstance().run();
+            telemetry.addData("holding", ChassisSub.chassisState);
+
+            telemetry.addData("holding", ChassisSub.trajectoryCompleted);
             telemetry.addData("vSlide", vSlideSub.getSlidePosition());
             telemetry.addData("angle", DepositSub.getTTAngle());
-            telemetry.update();
+
+            telemetry.addData("Y", ChassisSub.getY());
+            telemetry.addData("X", ChassisSub.getX());
+            telemetry.addData("Heading", ChassisSub.getHeading());
+            telemetry.addData("eY", ChassisSub.egetY());
+            telemetry.addData("eX", ChassisSub.egetX());
+            telemetry.addData("eHeading", ChassisSub.egetHeading());
+            telemetry.addData("acorrect postion", ChassisSub.atCorrectPosition());            telemetry.update();
         }
 //while(!isStopRequested()){
 //    vSlideSub.vSlideToPosition(300);

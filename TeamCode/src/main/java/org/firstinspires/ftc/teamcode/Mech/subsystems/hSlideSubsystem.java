@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 
 public class hSlideSubsystem extends SubsystemBase {
@@ -52,7 +53,7 @@ public class hSlideSubsystem extends SubsystemBase {
     }
     public double getSlideVelocity() { return hSlide.getVelocity();}
     public double getSlidePosition() { return hSlide.getCurrentPosition();}
-    public boolean slideCurrentSpike() { return hSlide.isOverCurrent();}
+    public boolean slideCurrentSpike() { return (hSlide.getCurrent(CurrentUnit.AMPS)>7);}
 
     public boolean hClose() { return !hClose.getState();}
     @Override

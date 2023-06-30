@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.IntakeSubsystem;
@@ -69,7 +70,8 @@ public class Testing extends LinearOpMode{
 
         waitForStart();
         while(!isStopRequested()){
-            telemetry.addData("distance", IntakeSub.getDistance());
+            hSlide.setPower(1);
+            telemetry.addData("amps", hSlide.getCurrent(CurrentUnit.AMPS));
             telemetry.update();
         }
 //        while(!isStopRequested()){

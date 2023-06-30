@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.depositClose;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperMid;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.depositOpen;
@@ -25,9 +26,11 @@ public class AutoConeDrop extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                         new InstantCommand(() -> {DepositSub.hasCone(true);}),
                         new depositClose(DepositSub),
+                        new dropperMid(DepositSub),
+                        new ttTurnRight(DepositSub),
+                        new highSlideOpen(vSlideSub),
                         new dropperDrop(DepositSub),
-                        new ParallelCommandGroup(new highSlideOpen(vSlideSub), new ttTurnRight(DepositSub)),
-                        new WaitCommand(200),
+                        new WaitCommand(400),
                         new depositOpen(DepositSub),
                         new InstantCommand(() -> {DepositSub.hasCone(false);}),
                         new WaitCommand(200),
