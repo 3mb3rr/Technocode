@@ -51,27 +51,13 @@ public class TeleFinal extends LinearOpMode {
 
     public void runOpMode() {
 //        PhotonCore.enable();
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
         IntakeSubsystem IntakeSub = new IntakeSubsystem(hardwareMap);
         hSlideSubsystem hSlideSub = new hSlideSubsystem(hardwareMap);
         DepositSubsystem DepositSub = new DepositSubsystem(hardwareMap);
         vSlideSubsystem vSlideSub = new vSlideSubsystem(hardwareMap);
         ChassisSubsystem ChassisSub = new ChassisSubsystem(hardwareMap);
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
-        leftRear.setDirection(DcMotorEx.Direction.REVERSE);
+
+        ChassisSub.auto = false;
         GamepadEx driverOp = new GamepadEx(gamepad1);
         GamepadEx mechOp = new GamepadEx(gamepad2);
         CommandScheduler.getInstance().reset();
@@ -88,7 +74,7 @@ public class TeleFinal extends LinearOpMode {
                 return IntakeSub.hasCone();
             }
         };
-        CommandScheduler.getInstance().registerSubsystem(DepositSub, vSlideSub, IntakeSub, hSlideSub);
+        CommandScheduler.getInstance().registerSubsystem(DepositSub, vSlideSub, IntakeSub, hSlideSub, ChassisSub);
 //        CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub);
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenReleased(new InstantCommand(() -> {
@@ -118,7 +104,7 @@ public class TeleFinal extends LinearOpMode {
                 .toggleWhenPressed(new TeleMid(DepositSub, vSlideSub, IntakeSub));
         mechOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .toggleWhenPressed(new TeleDrop(DepositSub, vSlideSub));
-        mechOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
+        driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new fallenConeGrab(IntakeSub));
 //        driverOp.getGamepadButton(GamepadKeys.Button.B)
 //                .toggleWhenPressed(new Cycle(DepositSub, vSlideSub, IntakeSub, hSlideSub));
@@ -129,34 +115,15 @@ public class TeleFinal extends LinearOpMode {
             telemetry.update();
         }
         hSlideSub.resetEncoder();
-//        CommandScheduler.getInstance().schedule(new TeleOpChassis(ChassisSub));
         while (!isStopRequested()) {
             IntakeSub.depositCone(DepositSub.hasCone());
-            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            double r = Math.hypot(driverOp.getLeftY(), driverOp.getLeftX());
-            double robotAngle = Math.atan2( driverOp.getLeftY(), driverOp.getLeftX()) - Math.PI / 4  - ((angles.firstAngle/180)*Math.PI);
-            double rightX = (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)-driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))/1.35;
-            final double v1 = r * Math.cos(robotAngle) + rightX;
-            final double v2 = r * Math.sin(robotAngle) - rightX;
-            final double v3 = r * Math.sin(robotAngle) + rightX;
-            final double v4 = r * Math.cos(robotAngle) - rightX;
-
-            if (gamepad1.left_stick_y != 0 || gamepad1.left_stick_x != 0 || gamepad1.left_trigger != 0 || gamepad1.right_trigger != 0) {
-
-                leftFront.setPower(v1);
-                rightFront.setPower(v2);
-                leftRear.setPower(v3);
-                rightRear.setPower(v4);
-            }
-            else{
-                brake();
-
-            }
+            ChassisSub.xInput = driverOp.getLeftX();
+            ChassisSub.yInput = driverOp.getLeftY();
+            ChassisSub.turnInput = driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)-driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
             CommandScheduler.getInstance().run();
-            if((driverOp.getRightY()>0.1) || (driverOp.getRightY()<-0.1)){
+            if((mechOp.getRightY()>0.1) || (mechOp.getRightY()<-0.1)){
                 IntakeSub.grotateLevel(true);
-                IntakeSub.armToAngle(IntakeSub.armTargetAngle+ driverOp.getRightY());
+                IntakeSub.armToAngle(IntakeSub.armTargetAngle+ (mechOp.getRightY()*1.5));
             }
             DepositSub.setTTPower(0.5 * (mechOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - mechOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
             if (0.5 * (mechOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - mechOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))<0.05){DepositSub.turntableToAngle((int)DepositSub.getTTAngle());}
@@ -168,9 +135,11 @@ public class TeleFinal extends LinearOpMode {
             telemetry.addData("eY", ChassisSub.egetY());
             telemetry.addData("eX", ChassisSub.egetX());
             telemetry.addData("eHeading", ChassisSub.egetHeading());
-            telemetry.addData("joystick", driverOp.getRightY());
+            telemetry.addData("joystickX", ChassisSub.xInput);
+            telemetry.addData("joystickY", ChassisSub.yInput);
+            telemetry.addData("turn", ChassisSub.turnInput);
+
             telemetry.addData("acorrect postion", ChassisSub.atCorrectPosition());
-            telemetry.addData("joystick", driverOp.getRightY());
             telemetry.addData("depositCone", IntakeSub.depositCone());
             telemetry.update();
         }

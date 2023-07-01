@@ -42,6 +42,7 @@ public class AutoFinal extends LinearOpMode {
         hSlideSubsystem hSlideSub = new hSlideSubsystem(hardwareMap);
         ChassisSubsystem ChassisSub = new ChassisSubsystem(hardwareMap);
         ChassisSub.BLorRR = true;
+        ChassisSub.auto = true;
         Camera camera = new Camera(hardwareMap);
         CommandScheduler.getInstance().reset();
         SubConstants.conestackHeight = 5;
@@ -58,10 +59,13 @@ public class AutoFinal extends LinearOpMode {
             }
         };
         CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub, camera);
-        CommandScheduler.getInstance().schedule(new ParallelCommandGroup(new hSlideClose(hSlideSub), new zoneDetection(camera, ChassisSub)).deadlineWith(new WaitUntilCommand(notInitLoop)));
+        CommandScheduler.getInstance().schedule(new ParallelCommandGroup(new hSlideClose(hSlideSub), new zoneDetection(camera)).deadlineWith(new WaitUntilCommand(notInitLoop)));
         while((!isStopRequested()) && (!isStarted())){
             CommandScheduler.getInstance().run();
             telemetry.addLine("initialization");
+
+            telemetry.addData("zone", camera.parkingZone);
+            telemetry.addData("insight", camera.inSight);
             telemetry.update();
         }
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new SequentialCommandGroup(new chassisContestedPole(ChassisSub), new ParallelCommandGroup(
@@ -95,10 +99,11 @@ public class AutoFinal extends LinearOpMode {
                                         new AutoConeGrab(IntakeSub, hSlideSub))
                         ),
                 new tArmDrop(IntakeSub),
-                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR)
+                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                new park(ChassisSub, camera.parkingZone)
                 )
-        ).withTimeout(26500),
-        new park(ChassisSub, camera.parkingZone));
+        ));
+//        new park(ChassisSub, camera.parkingZone));
         while (!isStopRequested()) {
             CommandScheduler.getInstance().run();
             IntakeSub.depositCone(DepositSub.hasCone());

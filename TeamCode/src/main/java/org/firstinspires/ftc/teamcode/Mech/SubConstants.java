@@ -10,11 +10,11 @@ public class SubConstants {
     public static double vKd = 0.002;
 //    increase vkd in case of oscillation
 //    public static double vKd = 0.01;
-    public static double tKp = 0.015;
+    public static double tKp = 0.045;
 
-    public static double tKi = 0.005;
+    public static double tKi = 0.015;
 //    public static double tKi = 0.002;
-    public static double tKd = 0.0005;
+    public static double tKd = 0.0015;
 
     public static double hKp = 0.0027;
 

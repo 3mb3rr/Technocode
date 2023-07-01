@@ -7,12 +7,22 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -29,16 +39,34 @@ public class ChassisSubsystem extends SubsystemBase {
     public boolean trajectoryCompleted = false;
     public boolean holdCompleted = true;
     SampleMecanumDrive drive;
+    BNO055IMU imu;
+    Orientation angles;
+    Acceleration gravity;
+    public double xInput = 0;
+    public double yInput = 0;
+    public double turnInput = 0;
+
 
     public enum chassis{
         driving, holding, tDriving
     }
+
     public ElapsedTime timer = new ElapsedTime();
     public chassis chassisState = chassis.holding;
     public boolean BLorRR = false;
     public ChassisSubsystem(final HardwareMap hMap) {
         register();
         drive = new SampleMecanumDrive(hMap);
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+
     }
 
 
@@ -47,7 +75,7 @@ public class ChassisSubsystem extends SubsystemBase {
         expectedPos=targetPos1;
         TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
                 .lineToLinearHeading(targetPos1)
-                .addDisplacementMarker(50, () -> {
+                .addDisplacementMarker(() -> {
                     trajectoryCompleted = true;
                 })
                 .build();
@@ -74,6 +102,7 @@ public class ChassisSubsystem extends SubsystemBase {
                 })
                 .build();
         trajectoryCompleted = false;
+
         drive.followTrajectorySequenceAsync(t1);
     }
     public void moveTo(Pose2d targetPos1, double degrees){
@@ -126,7 +155,12 @@ public class ChassisSubsystem extends SubsystemBase {
         return drive.getPoseVelocity().getHeading();
     }
 
+    public void brake() {
 
+        drive.setMotorPowers(0, 0, 0, 0);
+        drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    }
     @Override
     public void periodic(){
         drive.update();
@@ -137,8 +171,28 @@ public class ChassisSubsystem extends SubsystemBase {
                     lastTime= timer.milliseconds();
                 if(holdingTemp){holdTo(new Pose2d((egetX()+0.000001), egetY(), Math.toRadians(egetHeading())));}
                 else{holdTo(expectedPos);}}
-            case driving:
 
+        }
+        if(!auto){
+            chassisState = chassis.driving;
+            imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            double r = Math.hypot(yInput, xInput);
+            double robotAngle = Math.atan2(yInput, xInput) - Math.PI / 4  - ((angles.firstAngle/180)*Math.PI);
+            double rightX = (turnInput)/1.35;
+            final double v1 = (r * Math.cos(robotAngle) + rightX);
+            final double v2 = (r * Math.sin(robotAngle) + rightX);
+            final double v3 = (r * Math.cos(robotAngle) - rightX);
+            final double v4 = (r * Math.sin(robotAngle) - rightX);
+
+            if (yInput != 0 || xInput != 0 || turnInput != 0) {
+
+                drive.setMotorPowers(v1, v2, v3, v4);
+            }
+            else{
+                brake();
+
+            }
         }
 
     }

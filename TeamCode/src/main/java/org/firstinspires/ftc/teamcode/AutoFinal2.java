@@ -43,6 +43,8 @@ public class AutoFinal2 extends LinearOpMode {
         ChassisSubsystem ChassisSub = new ChassisSubsystem(hardwareMap);
         Camera camera = new Camera(hardwareMap);
         CommandScheduler.getInstance().reset();
+        ChassisSub.BLorRR = false;
+        ChassisSub.auto = true;
         SubConstants.conestackHeight = 5;
         BooleanSupplier DepositCone = new BooleanSupplier() {
             @Override
@@ -57,7 +59,7 @@ public class AutoFinal2 extends LinearOpMode {
             }
         };
         CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub, camera);
-        CommandScheduler.getInstance().schedule(new ParallelCommandGroup(new hSlideClose(hSlideSub), new zoneDetection(camera, ChassisSub)).deadlineWith(new WaitUntilCommand(notInitLoop)));
+        CommandScheduler.getInstance().schedule(new ParallelCommandGroup(new hSlideClose(hSlideSub), new zoneDetection(camera)).deadlineWith(new WaitUntilCommand(notInitLoop)));
         while((!isStopRequested()) && (!isStarted())){
             CommandScheduler.getInstance().run();
             telemetry.addLine("initialization");
@@ -94,10 +96,11 @@ public class AutoFinal2 extends LinearOpMode {
                                         new AutoConeGrab(IntakeSub, hSlideSub))
                         ),
                         new tArmDrop(IntakeSub),
-                        new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR)
+                        new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                        new park(ChassisSub, camera.parkingZone)
                 )
-                ).withTimeout(26500),
-                new park(ChassisSub, camera.parkingZone));
+                )
+                );
         while (!isStopRequested()) {
             CommandScheduler.getInstance().run();
             IntakeSub.depositCone(DepositSub.hasCone());

@@ -14,7 +14,6 @@ public class zoneDetection extends CommandBase {
 
     // The subsystem the command runs on
     private final Camera camera;
-    private final ChassisSubsystem ChassisSub;
 
 
     // Tag ID 1,2,3 from the 36h11 family
@@ -23,10 +22,9 @@ public class zoneDetection extends CommandBase {
     int RIGHT = 3;
     AprilTagDetection tagOfInterest = null;
 
-    public zoneDetection(Camera subsystem, ChassisSubsystem chassisSub) {
+    public zoneDetection(Camera subsystem) {
         camera = subsystem;
-        ChassisSub = chassisSub;
-        addRequirements(camera, ChassisSub);
+        addRequirements(camera);
     }
 
     @Override
@@ -67,7 +65,7 @@ public class zoneDetection extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return (ChassisSub.chassisState == ChassisSubsystem.chassis.driving);
+        return false;
     }
 
 }

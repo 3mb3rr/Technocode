@@ -40,7 +40,7 @@ public class AutoConeDrop extends SequentialCommandGroup {
                         new ConditionalCommand(new ttTurnRight(DepositSub), new ttTurnLeft(DepositSub), RIGHT),
                         new highSlideOpen(vSlideSub),
                         new dropperDrop(DepositSub),
-                        new WaitCommand(400),
+                        new WaitCommand(200),
                         new depositOpen(DepositSub),
                         new InstantCommand(() -> {DepositSub.hasCone(false);}),
                         new WaitCommand(200),
