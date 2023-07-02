@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -27,6 +28,7 @@ import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDown;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tLowPole;
+import org.firstinspires.ftc.teamcode.Mech.Commands.Cycle;
 import org.firstinspires.ftc.teamcode.Mech.Commands.TeleConeGrab;
 import org.firstinspires.ftc.teamcode.Mech.Commands.TeleDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.TeleHigh;
@@ -48,6 +50,7 @@ public class TeleFinal extends LinearOpMode {
     Acceleration gravity;
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    ElapsedTime timer = new ElapsedTime();
 
     public void runOpMode() {
 //        PhotonCore.enable();
@@ -90,7 +93,8 @@ public class TeleFinal extends LinearOpMode {
         mechOp.getGamepadButton(GamepadKeys.Button.X)
                 .toggleWhenPressed(new transfer(IntakeSub, DepositSub));
         mechOp.getGamepadButton(GamepadKeys.Button.Y)
-                .toggleWhenPressed(new SequentialCommandGroup(new tLowPole(IntakeSub), new WaitCommand(500), new grabberOpen(IntakeSub)));
+                .whenReleased(new grabberOpen(IntakeSub))
+                .whenPressed(new tLowPole(IntakeSub));
         mechOp.getGamepadButton(GamepadKeys.Button.A)
                 .whenReleased(new SequentialCommandGroup(new grabberOpen(IntakeSub), new WaitCommand(200), new tArmDrop(IntakeSub)))
                 .whenPressed(new tArmDown(IntakeSub));
@@ -106,8 +110,8 @@ public class TeleFinal extends LinearOpMode {
                 .toggleWhenPressed(new TeleDrop(DepositSub, vSlideSub));
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new fallenConeGrab(IntakeSub));
-//        driverOp.getGamepadButton(GamepadKeys.Button.B)
-//                .toggleWhenPressed(new Cycle(DepositSub, vSlideSub, IntakeSub, hSlideSub));
+        driverOp.getGamepadButton(GamepadKeys.Button.B)
+                .toggleWhenPressed(new Cycle(DepositSub, vSlideSub, IntakeSub, hSlideSub));
         while ((!isStopRequested()) && (!isStarted())) {
             hSlideSub.hSlideSetPower(-0.3);
             CommandScheduler.getInstance().run();
@@ -115,7 +119,20 @@ public class TeleFinal extends LinearOpMode {
             telemetry.update();
         }
         hSlideSub.resetEncoder();
+        timer.reset();
         while (!isStopRequested()) {
+
+            if((timer.milliseconds()>80000) && (timer.milliseconds()>80300)){
+                telemetry.addLine("rumbling");
+                gamepad1.rumble(200);
+                gamepad2.rumble(200);
+            }
+            if((timer.seconds()>90000) && (timer.milliseconds()>92000)){
+                telemetry.addLine("rumbling");
+                gamepad1.rumble(200);
+                gamepad2.rumble(200);
+            }
+            telemetry.addData("timer", timer.milliseconds()/1000);
             IntakeSub.depositCone(DepositSub.hasCone());
             ChassisSub.xInput = driverOp.getLeftX();
             ChassisSub.yInput = driverOp.getLeftY();

@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,6 +12,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnMiddle;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnRight;
 import org.firstinspires.ftc.teamcode.Mech.Commands.chassisContestedPole;
 import org.firstinspires.ftc.teamcode.Mech.Commands.park;
 import org.firstinspires.ftc.teamcode.Mech.Commands.zoneDetection;
@@ -52,7 +56,6 @@ public class AutoTest extends LinearOpMode {
                 return isStarted();
             }
         };
-        CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub);
 
 //        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
 //                        new grabberOpen(IntakeSub),
@@ -71,6 +74,7 @@ public class AutoTest extends LinearOpMode {
 //                new AutoConeDrop(DepositSub, vSlideSub),
 //                new AutoConeDrop(DepositSub, vSlideSub)));
 //        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new highSlideOpen(vSlideSub), new vSlideClose(vSlideSub)));
+        CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub);
         CommandScheduler.getInstance().schedule(new ParallelCommandGroup(new hSlideClose(hSlideSub), new zoneDetection(camera)).deadlineWith(new WaitUntilCommand(notInitLoop)));
         while((!isStopRequested()) && (!isStarted())){
             CommandScheduler.getInstance().run();
@@ -79,7 +83,29 @@ public class AutoTest extends LinearOpMode {
             telemetry.addLine("initialization");
             telemetry.update();
         }
-        CommandScheduler.getInstance().schedule(new park(ChassisSub, camera.parkingZone));
+
+        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
+                new ttTurnMiddle(DepositSub),
+                new WaitCommand(200),
+                new ttTurnRight(DepositSub),
+                new WaitCommand(200),
+                new ttTurnMiddle(DepositSub),
+                new WaitCommand(200),
+                new ttTurnRight(DepositSub),
+                new WaitCommand(200),
+                new ttTurnMiddle(DepositSub),
+                new WaitCommand(200),
+                new ttTurnRight(DepositSub),
+                new WaitCommand(200),
+                new ttTurnMiddle(DepositSub),
+                new WaitCommand(200),
+                new ttTurnRight(DepositSub),
+                new WaitCommand(200),
+                new ttTurnMiddle(DepositSub),
+                new WaitCommand(200),
+                new ttTurnRight(DepositSub),
+                new WaitCommand(200)
+        ));
         while (!isStopRequested()) {
             CommandScheduler.getInstance().run();
             telemetry.addData("holding", ChassisSub.chassisState);

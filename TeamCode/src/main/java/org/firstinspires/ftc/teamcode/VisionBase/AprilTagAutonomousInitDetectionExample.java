@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.teamcode.VisionBase;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -74,7 +75,9 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             public void onOpened()
             {
                 camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                FtcDashboard.getInstance().startCameraStream(camera, 30);
             }
+
 
             @Override
             public void onError(int errorCode)

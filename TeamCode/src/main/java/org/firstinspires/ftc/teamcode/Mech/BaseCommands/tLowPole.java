@@ -17,7 +17,7 @@ public class tLowPole extends CommandBase {
     }
     @Override
     public void initialize() {
-        IntakeSub.grotateToAngle(-90);
+        IntakeSub.grotateToAngle(-45);
         IntakeSub.armToAngle(90);
     }
 

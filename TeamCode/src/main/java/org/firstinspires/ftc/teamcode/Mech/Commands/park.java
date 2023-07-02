@@ -24,9 +24,9 @@ public class park extends CommandBase {
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
         if (ChassisSub.BLorRR) {
-            ChassisSub.moveTo(new Pose2d(-26, 2, Math.toRadians(0)));
-        } else {
             ChassisSub.moveTo(new Pose2d(-26, -2, Math.toRadians(0)));
+        } else {
+            ChassisSub.moveTo(new Pose2d(-26, 2, Math.toRadians(0)));
         }
     }
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Mech.subsystems;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.qualcomm.robotcore.hardware.Servo;
@@ -38,6 +39,7 @@ public class DepositSubsystem extends SubsystemBase {
         deposit = hMap.get(Servo.class, "deposit");
         dropper = hMap.get(Servo.class, "dropper");
         turntable =  hMap.get(DcMotorEx.class, "turntable");
+        turntable.setDirection(DcMotorSimple.Direction.REVERSE);
         turntable.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         turntable.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         ttAngle = (turntable.getCurrentPosition()*SubConstants.degspertick);

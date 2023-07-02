@@ -33,10 +33,10 @@ public class transfer extends SequentialCommandGroup {
         addCommands (new SequentialCommandGroup(
                 new armDrop(IntakeSub),
                 new WaitCommand(280),
-                new grabberOpen(IntakeSub)
+                new grabberOpen(IntakeSub),
+                new InstantCommand(() -> {DepositSub.hasCone(true);})
                 )
         );
-        DepositSub.hasCone(true);
         addRequirements(IntakeSub);
     }
 
