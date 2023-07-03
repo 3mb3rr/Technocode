@@ -77,7 +77,7 @@ public class poleDistanceDetection extends OpenCvPipeline {
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         //find contours, input scaledThresh because it has hard edges
-        Imgproc.findContours(scaledThresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(scaledThresh, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_NONE);
         for (int i = 0; i<contours.size(); i++){
             if (Imgproc.contourArea(contours.get(contourNo))>lArea){ lArea = Imgproc.contourArea(contours.get(i));
                 contourNo = i;
@@ -88,7 +88,7 @@ public class poleDistanceDetection extends OpenCvPipeline {
         M =Imgproc.moments(contours.get(contourNo));
         cx = (int)(M.m10/M.m00);
         cy = (int)(M.m01/M.m00);
-        Imgproc.drawContours(edges, contours, 1, new Scalar(0, 255, 0), 3);
+        Imgproc.drawContours(input, contours, -1, new Scalar(0, 255, 0), 3);
         //list of frames to reduce inconsistency, not too many so that it is still real-time, change the number from 5 if you want
         if (frameList.size() > 5) {
             frameList.remove(0);
@@ -100,7 +100,7 @@ public class poleDistanceDetection extends OpenCvPipeline {
         if(inputtt){
             scaledThresh.copyTo(input);}
         if(inputtt2){
-            masked.copyTo(input);}
+            edges.copyTo(input);}
         scaledThresh.release();
         scaledMask.release();
         mat.release();
