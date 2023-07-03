@@ -22,6 +22,7 @@
         private final AnalogInput Pot;
         public double armOutput = 0;
         public double armAngle = 0;
+        public boolean fallenCone = false;
         public double grotatePos = 0;
         public double armTargetAngle = 90;
         public boolean level = false;
@@ -114,8 +115,12 @@
             armAngle = (Pot.getVoltage()-0.584)/SubConstants.degpervolt;
             armOutput = controller.calculate(armTargetAngle, armAngle)+(SubConstants.armFeedforward*Math.cos(Math.toRadians(armAngle)));}
             arm.setPower(armOutput);
-            if (level){
+            if (level && !fallenCone){
                 grotatePos = 0.48+((-armAngle)*SubConstants.grotatePosPerDeg);
+                grotate.setPosition(grotatePos);
+            }
+            if (level && fallenCone){
+                grotatePos = 0.48+((-armAngle-90)*SubConstants.grotatePosPerDeg);
                 grotate.setPosition(grotatePos);
             }
 

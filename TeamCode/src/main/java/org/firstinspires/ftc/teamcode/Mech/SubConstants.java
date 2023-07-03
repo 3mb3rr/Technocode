@@ -31,7 +31,7 @@ public class SubConstants {
     public static int hPolePos = 1050;
     public static int mPolePos = 400;
 
-    public static int ttRightAngle = -48;
+    public static int ttRightAngle = -44;
     //change -53 to -45
 
     public static double dropperDrop = 0.29;

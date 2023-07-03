@@ -71,24 +71,25 @@ public class poleDistanceDetection extends OpenCvPipeline {
 
         Mat edges = new Mat();
 //        //detect edges(only useful for showing result)(you can delete)
-//        Imgproc.Canny(scaledThresh, edges, 100, 200);
+        Imgproc.Canny(scaledThresh, edges, 100, 200);
 
         //contours, apply post processing to information
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         //find contours, input scaledThresh because it has hard edges
-        Imgproc.findContours(scaledThresh, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_NONE);
+        Imgproc.findContours(scaledThresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         for (int i = 0; i<contours.size(); i++){
-            if (Imgproc.contourArea(contours.get(contourNo))>lArea){ lArea = Imgproc.contourArea(contours.get(i));
+            if (Imgproc.contourArea(contours.get(i))>lArea){ lArea = Imgproc.contourArea(contours.get(i));
                 contourNo = i;
             }
         }
+        Mat contour = new Mat();
+        Imgproc.drawContours(contour, contours, -1, new Scalar(0, 255, 0), 3);
 
         Moments M = new Moments();
-        M =Imgproc.moments(contours.get(contourNo));
+        M =Imgproc.moments(edges);
         cx = (int)(M.m10/M.m00);
         cy = (int)(M.m01/M.m00);
-        Imgproc.drawContours(input, contours, -1, new Scalar(0, 255, 0), 3);
         //list of frames to reduce inconsistency, not too many so that it is still real-time, change the number from 5 if you want
         if (frameList.size() > 5) {
             frameList.remove(0);
@@ -100,7 +101,7 @@ public class poleDistanceDetection extends OpenCvPipeline {
         if(inputtt){
             scaledThresh.copyTo(input);}
         if(inputtt2){
-            edges.copyTo(input);}
+            contour.copyTo(input);}
         scaledThresh.release();
         scaledMask.release();
         mat.release();

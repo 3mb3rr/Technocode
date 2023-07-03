@@ -106,7 +106,11 @@ public class ChassisSubsystem extends SubsystemBase {
         drive.followTrajectorySequenceAsync(t1);
     }
     public void moveTo(Pose2d targetPos1, double degrees){
-        expectedPos= new Pose2d(targetPos1.getX(), targetPos1.getY(), (targetPos1.getHeading())+Math.toRadians(degrees));
+        double eHead = 0;
+        if(degrees<0) eHead = 2*Math.PI+(targetPos1.getHeading())+Math.toRadians(degrees);
+        else eHead = (targetPos1.getHeading())+Math.toRadians(degrees);
+
+        expectedPos= new Pose2d(targetPos1.getX(), targetPos1.getY(), eHead);
         TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
                 .resetVelConstraint()
                 .lineToLinearHeading(targetPos1)
@@ -161,6 +165,10 @@ public class ChassisSubsystem extends SubsystemBase {
         drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
+    public void imuReset(){
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        imu.initialize(parameters);
+    }
     @Override
     public void periodic(){
         drive.update();
@@ -177,8 +185,8 @@ public class ChassisSubsystem extends SubsystemBase {
             chassisState = chassis.driving;
             imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            double r = Math.hypot(yInput, xInput);
-            double robotAngle = Math.atan2(yInput, xInput) - Math.PI / 4  - ((angles.firstAngle/180)*Math.PI);
+            double r = Math.hypot(-yInput, -xInput);
+            double robotAngle = Math.atan2(-yInput, -xInput) - Math.PI / 4  - ((angles.firstAngle/180)*Math.PI);
             double rightX = (turnInput)/1.35;
             final double v1 = (r * Math.cos(robotAngle) + rightX);
             final double v2 = (r * Math.sin(robotAngle) + rightX);

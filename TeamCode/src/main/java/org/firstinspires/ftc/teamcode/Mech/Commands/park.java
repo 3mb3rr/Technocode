@@ -22,31 +22,25 @@ public class park extends CommandBase {
 
     @Override
     public void initialize() {
-        ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
-        if (ChassisSub.BLorRR) {
-            ChassisSub.moveTo(new Pose2d(-26, -2, Math.toRadians(0)));
+        if ((ChassisSub.trajectoryCompleted) && (!temp1)) {
+            if (ChassisSub.BLorRR) {
+                if ((zone == 2) || (zone == 0))
+                    ChassisSub.moveTo(new Pose2d(-50, 1, Math.toRadians(90)), -90);
+                else if (zone == 1)
+                    ChassisSub.moveTo(new Pose2d(-50, -23, Math.toRadians(90)), -90);
+                else if (zone == 3)
+                    ChassisSub.moveTo(new Pose2d(-26, 25, Math.toRadians(90)), -90);}
         } else {
-            ChassisSub.moveTo(new Pose2d(-26, 2, Math.toRadians(0)));
+            if ((zone == 2) || (zone == 0))  ChassisSub.moveTo(new Pose2d(-50, -1, Math.toRadians(-90)), 90);
+             else if (zone == 1) ChassisSub.moveTo(new Pose2d(-50, -25, Math.toRadians(-90)), 90);
+            else if (zone == 3) ChassisSub.moveTo(new Pose2d(-50, 23, Math.toRadians(-90)), 90);
         }
     }
 
     @Override
     public void execute() {
-        if ((ChassisSub.trajectoryCompleted) && (!temp1)) {
-            if (ChassisSub.BLorRR) {
-                if ((zone == 2) || (zone == 0)) {
-                }
-             else if (zone == 1)
-                ChassisSub.moveTo(new Pose2d(-26, 2, Math.toRadians(0)), new Pose2d(-26, -26, Math.toRadians(0)));
-            else if (zone == 3)
-                ChassisSub.moveTo(new Pose2d(-26, 2, Math.toRadians(0)), new Pose2d(-26, 22, Math.toRadians(0)));}
-        } else {
-            if ((zone == 2) || (zone == 0)) {
-            } else if (zone == 1) ChassisSub.moveTo(new Pose2d(-26, -26, Math.toRadians(0)));
-            else if (zone == 3) ChassisSub.moveTo(new Pose2d(-26, 22, Math.toRadians(0)));
-        }
 
-        if((ChassisSub.trajectoryCompleted)&&(temp1))
+        if((ChassisSub.trajectoryCompleted))
     {
         ChassisSub.chassisState = ChassisSubsystem.chassis.holding;
     }

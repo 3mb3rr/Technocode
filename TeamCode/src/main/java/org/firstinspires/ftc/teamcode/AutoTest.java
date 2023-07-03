@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperMid;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnMiddle;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnRight;
@@ -85,6 +86,7 @@ public class AutoTest extends LinearOpMode {
         }
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
+                new dropperMid(DepositSub),
                 new ttTurnMiddle(DepositSub),
                 new WaitCommand(200),
                 new ttTurnRight(DepositSub),

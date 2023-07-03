@@ -41,10 +41,10 @@ public class AutoFinal2 extends LinearOpMode {
         IntakeSubsystem IntakeSub = new IntakeSubsystem(hardwareMap);
         hSlideSubsystem hSlideSub = new hSlideSubsystem(hardwareMap);
         ChassisSubsystem ChassisSub = new ChassisSubsystem(hardwareMap);
-        Camera camera = new Camera(hardwareMap);
-        CommandScheduler.getInstance().reset();
         ChassisSub.BLorRR = false;
         ChassisSub.auto = true;
+        Camera camera = new Camera(hardwareMap);
+        CommandScheduler.getInstance().reset();
         SubConstants.conestackHeight = 5;
         BooleanSupplier DepositCone = new BooleanSupplier() {
             @Override
@@ -63,44 +63,47 @@ public class AutoFinal2 extends LinearOpMode {
         while((!isStopRequested()) && (!isStarted())){
             CommandScheduler.getInstance().run();
             telemetry.addLine("initialization");
+
+            telemetry.addData("zone", camera.parkingZone);
+            telemetry.addData("insight", camera.inSight);
             telemetry.update();
         }
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new SequentialCommandGroup(new chassisContestedPole(ChassisSub), new ParallelCommandGroup(
+                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                new SequentialCommandGroup(
+                        new AutoConeExtend(IntakeSub, hSlideSub),
+                        new AutoConeGrab(IntakeSub, hSlideSub))
+        ),
+                new ParallelCommandGroup(
                         new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
                         new SequentialCommandGroup(
                                 new AutoConeExtend(IntakeSub, hSlideSub),
                                 new AutoConeGrab(IntakeSub, hSlideSub))
                 ),
-                        new ParallelCommandGroup(
-                                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                                new SequentialCommandGroup(
-                                        new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub))
-                        ),
-                        new ParallelCommandGroup(
-                                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                                new SequentialCommandGroup(
-                                        new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub))
-                        ),
-                        new ParallelCommandGroup(
-                                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                                new SequentialCommandGroup(
-                                        new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub))
-                        ),
-                        new ParallelCommandGroup(
-                                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                                new SequentialCommandGroup(
-                                        new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub))
-                        ),
-                        new tArmDrop(IntakeSub),
+                new ParallelCommandGroup(
                         new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                        new park(ChassisSub, camera.parkingZone)
-                )
-                )
-                );
+                        new SequentialCommandGroup(
+                                new AutoConeExtend(IntakeSub, hSlideSub),
+                                new AutoConeGrab(IntakeSub, hSlideSub))
+                ),
+                new ParallelCommandGroup(
+                        new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                        new SequentialCommandGroup(
+                                new AutoConeExtend(IntakeSub, hSlideSub),
+                                new AutoConeGrab(IntakeSub, hSlideSub))
+                ),
+                new ParallelCommandGroup(
+                        new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                        new SequentialCommandGroup(
+                                new AutoConeExtend(IntakeSub, hSlideSub),
+                                new AutoConeGrab(IntakeSub, hSlideSub))
+                ),
+                new tArmDrop(IntakeSub),
+                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                new park(ChassisSub, camera.parkingZone)
+        )
+        ));
+//        new park(ChassisSub, camera.parkingZone));
         while (!isStopRequested()) {
             CommandScheduler.getInstance().run();
             IntakeSub.depositCone(DepositSub.hasCone());
@@ -116,7 +119,10 @@ public class AutoFinal2 extends LinearOpMode {
             telemetry.addData("zone", camera.parkingZone);
             telemetry.addData("insight", camera.inSight);
             telemetry.addData("grabberCone", IntakeSub.hasCone());
-            telemetry.addData("condition", ((SubConstants.conestackHeight!=0) && (!running)));
+            telemetry.addData("holding", ChassisSub.chassisState);
+            telemetry.addData("atCorrectPosition", ChassisSub.atCorrectPosition());
+            telemetry.addData("heading", ChassisSub.getHeading());
+            telemetry.addData("eHeading", ChassisSub.egetHeading());
             telemetry.addData("deposithascone", IntakeSub.depositCone());
             telemetry.addData("hclose", hSlideSub.hClose());
             telemetry.addData("hclose", hSlideSub.hClose());

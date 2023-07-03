@@ -63,7 +63,7 @@ public class AutoConeGrab extends SequentialCommandGroup {
                         })
                 ),
                 new grabberOpen(IntakeSub),
-                new WaitCommand(200)
+                new WaitCommand(80)
         );
 
         addRequirements(IntakeSub);

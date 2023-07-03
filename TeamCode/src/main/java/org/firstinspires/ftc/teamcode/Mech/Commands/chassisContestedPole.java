@@ -19,8 +19,8 @@ public class chassisContestedPole extends CommandBase {
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
         if(ChassisSub.BLorRR)
-        ChassisSub.moveTo(new Pose2d(-50, 4, Math.toRadians(0)), 90);
-        else ChassisSub.moveTo(new Pose2d(-50, -4, Math.toRadians(0)), -90);
+        ChassisSub.moveTo(new Pose2d(-50, 4, Math.toRadians(0)), 91);
+        else ChassisSub.moveTo(new Pose2d(-50, -4, Math.toRadians(0)), -88);
     }
     @Override
     public void execute() {

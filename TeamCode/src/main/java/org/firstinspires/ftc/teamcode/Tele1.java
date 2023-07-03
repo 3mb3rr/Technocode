@@ -45,7 +45,7 @@ import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 import java.util.function.BooleanSupplier;
 
 @TeleOp
-public class TeleFinal extends LinearOpMode {
+public class Tele1 extends LinearOpMode {
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
@@ -91,23 +91,23 @@ public class TeleFinal extends LinearOpMode {
 
         driverOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .toggleWhenPressed(new TeleConeGrab(IntakeSub, hSlideSub));
-        mechOp.getGamepadButton(GamepadKeys.Button.X)
+        driverOp.getGamepadButton(GamepadKeys.Button.X)
                 .toggleWhenPressed(new transfer(IntakeSub, DepositSub));
-        mechOp.getGamepadButton(GamepadKeys.Button.Y)
+        driverOp.getGamepadButton(GamepadKeys.Button.Y)
                 .whenReleased(new grabberOpen(IntakeSub))
                 .whenPressed(new tLowPole(IntakeSub));
-        mechOp.getGamepadButton(GamepadKeys.Button.A)
+        driverOp.getGamepadButton(GamepadKeys.Button.A)
                 .whenReleased(new SequentialCommandGroup(new grabberOpen(IntakeSub), new WaitCommand(200), new tArmDrop(IntakeSub)))
                 .whenPressed(new tArmDown(IntakeSub));
         driverOp.getGamepadButton(GamepadKeys.Button.X)
                 .whenReleased(new SequentialCommandGroup(new grabberOpen(IntakeSub), new WaitCommand(150), new ParallelCommandGroup(new tArmDrop(IntakeSub), new hSlideClose(hSlideSub))))
                 .whenPressed(new tArmDown(IntakeSub));
 //                        (new SequentialCommandGroup(new tArmDown(IntakeSub), new WaitCommand(500), new grabberOpen(IntakeSub)));
-        mechOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .toggleWhenPressed(new TeleHigh(DepositSub, vSlideSub, IntakeSub));
-        mechOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
                 .toggleWhenPressed(new TeleMid(DepositSub, vSlideSub, IntakeSub));
-        mechOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+        driverOp.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .toggleWhenPressed(new TeleDrop(DepositSub, vSlideSub));
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new fallenConeGrab(IntakeSub));
@@ -144,7 +144,7 @@ public class TeleFinal extends LinearOpMode {
                 IntakeSub.grotateLevel(true);
                 IntakeSub.armToAngle(IntakeSub.armTargetAngle- (mechOp.getRightY()*2.5));
             }
-            DepositSub.setTTPower(0.5 * (mechOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - mechOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
+            DepositSub.setTTPower(0.5 * (driverOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - driverOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
             if (0.5 * (mechOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - mechOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))<0.05){DepositSub.turntableToAngle((int)DepositSub.getTTAngle());}
             telemetry.addData("ArmAngle", IntakeSub.getArmAngle());
             telemetry.addData("ArmTargetAngle", IntakeSub.armTargetAngle);
