@@ -11,11 +11,17 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.autoArmDown;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisToConestack;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperMid;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideAutoOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideSafeOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnMiddle;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnRight;
 import org.firstinspires.ftc.teamcode.Mech.Commands.chassisContestedPole;
+import org.firstinspires.ftc.teamcode.Mech.Commands.chassisSafeInitial;
+import org.firstinspires.ftc.teamcode.Mech.Commands.chassisSafePole;
 import org.firstinspires.ftc.teamcode.Mech.Commands.park;
 import org.firstinspires.ftc.teamcode.Mech.Commands.zoneDetection;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
@@ -86,27 +92,18 @@ public class AutoTest extends LinearOpMode {
         }
 
         CommandScheduler.getInstance().schedule(new SequentialCommandGroup(
-                new dropperMid(DepositSub),
-                new ttTurnMiddle(DepositSub),
-                new WaitCommand(200),
-                new ttTurnRight(DepositSub),
-                new WaitCommand(200),
-                new ttTurnMiddle(DepositSub),
-                new WaitCommand(200),
-                new ttTurnRight(DepositSub),
-                new WaitCommand(200),
-                new ttTurnMiddle(DepositSub),
-                new WaitCommand(200),
-                new ttTurnRight(DepositSub),
-                new WaitCommand(200),
-                new ttTurnMiddle(DepositSub),
-                new WaitCommand(200),
-                new ttTurnRight(DepositSub),
-                new WaitCommand(200),
-                new ttTurnMiddle(DepositSub),
-                new WaitCommand(200),
-                new ttTurnRight(DepositSub),
-                new WaitCommand(200)
+                new chassisSafeInitial(ChassisSub),
+                new chassisSafePole(ChassisSub),
+                new hSlideSafeOpen(hSlideSub),
+                new autoArmDown(IntakeSub),
+                new chassisToConestack(hSlideSub, IntakeSub, ChassisSub),
+                new chassisSafePole(ChassisSub),
+                new chassisToConestack(hSlideSub, IntakeSub, ChassisSub),
+                new chassisSafePole(ChassisSub),
+                new chassisToConestack(hSlideSub, IntakeSub, ChassisSub),
+                new chassisSafePole(ChassisSub),
+                new chassisToConestack(hSlideSub, IntakeSub, ChassisSub),
+                new chassisSafePole(ChassisSub)
         ));
         while (!isStopRequested()) {
             CommandScheduler.getInstance().run();

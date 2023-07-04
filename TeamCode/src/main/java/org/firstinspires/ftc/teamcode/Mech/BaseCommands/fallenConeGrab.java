@@ -19,7 +19,7 @@ public class fallenConeGrab extends CommandBase {
     @Override
     public void initialize() {
             IntakeSub.armState = IntakeSubsystem.Arm.grabbing;
-            IntakeSub.fallenCone = false;
+            IntakeSub.fallenCone = true;
             IntakeSub.openGrabber();
         IntakeSub.armToAngle(0);
         IntakeSub.grotateToAngle(-95);

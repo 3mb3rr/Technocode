@@ -19,6 +19,8 @@ public class autoArmDown extends CommandBase {
     @Override
     public void initialize() {
         IntakeSub.armState = IntakeSubsystem.Arm.grabbing;
+        SubConstants.armFeedforward = 0.23;
+
         IntakeSub.armToAngle(SubConstants.armAngle[5-SubConstants.conestackHeight]);
         IntakeSub.grotateToAngle(-SubConstants.armAngle[5-SubConstants.conestackHeight]);
     }

@@ -29,11 +29,14 @@ public class park extends CommandBase {
                 else if (zone == 1)
                     ChassisSub.moveTo(new Pose2d(-50, -23, Math.toRadians(90)), -90);
                 else if (zone == 3)
-                    ChassisSub.moveTo(new Pose2d(-26, 25, Math.toRadians(90)), -90);}
-        } else {
-            if ((zone == 2) || (zone == 0))  ChassisSub.moveTo(new Pose2d(-50, -1, Math.toRadians(-90)), 90);
-             else if (zone == 1) ChassisSub.moveTo(new Pose2d(-50, -25, Math.toRadians(-90)), 90);
-            else if (zone == 3) ChassisSub.moveTo(new Pose2d(-50, 23, Math.toRadians(-90)), 90);
+                    ChassisSub.moveTo(new Pose2d(-50, 25, Math.toRadians(90)), -90);
+            } else {
+                if ((zone == 2) || (zone == 0))
+                    ChassisSub.moveTo(new Pose2d(-50, -1, Math.toRadians(-90)), 90);
+                else if (zone == 1)
+                    ChassisSub.moveTo(new Pose2d(-50, -25, Math.toRadians(-90)), 90);
+                else if (zone == 3) ChassisSub.moveTo(new Pose2d(-50, 23, Math.toRadians(-90)), 90);
+            }
         }
     }
 

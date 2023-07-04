@@ -19,7 +19,7 @@ public class poleDistanceDetection extends OpenCvPipeline {
     //backlog of frames to average out to reduce noise
     ArrayList<double[]> frameList;
     //these are public static to be tuned in dashboard
-    public static double strictLowS = 100;
+    public static double strictLowS = 150;
     public static double strictHighS = 255;
     public double lArea = 0;
     public int cx, cy;
@@ -87,15 +87,22 @@ public class poleDistanceDetection extends OpenCvPipeline {
         Imgproc.drawContours(contour, contours, -1, new Scalar(0, 255, 0), 3);
 
         Moments M = new Moments();
-        M =Imgproc.moments(edges);
+        M =Imgproc.moments(scaledThresh);
         cx = (int)(M.m10/M.m00);
         cy = (int)(M.m01/M.m00);
-        //list of frames to reduce inconsistency, not too many so that it is still real-time, change the number from 5 if you want
-        if (frameList.size() > 5) {
-            frameList.remove(0);
-        }
-        Imgproc.line(input, new Point(cx, cy), new Point(cx, 0), new Scalar(0, 255, 255));
-        Imgproc.line(scaledThresh, new Point(cx, cy), new Point(cx, 0), new Scalar(0, 255, 255));
+        Mat selection = new Mat();
+        Imgproc.rectangle(selection, new Point((cx-100), 0), new Point((cx+100), 448), new Scalar(255, 255, 255), -1);
+//        Core.bitwise_and(scaledThresh, scaledMask, contour, selection);
+//        //list of frames to reduce inconsistency, not too many so that it is still real-time, change the number from 5 if you want
+//        Moments Mm = new Moments();
+//        Mm =Imgproc.moments(contour);
+//        cx = (int)(Mm.m10/M.m00);
+//        cy = (int)(Mm.m01/M.m00);
+//        if (frameList.size() > 5) {
+//            frameList.remove(0);
+//        }
+//        Imgproc.line(input, new Point(cx, 448), new Point(cx, 0), new Scalar(0, 255, 255));
+//        Imgproc.line(scaledThresh, new Point(cx, 448), new Point(cx, 0), new Scalar(0, 255, 255));
         //release all the data
 //        input.release();
         if(inputtt){

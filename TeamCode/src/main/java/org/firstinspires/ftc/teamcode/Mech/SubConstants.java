@@ -14,7 +14,7 @@ public class SubConstants {
 
     public static double tKi = 0.005;
 //    public static double tKi = 0.002;
-    public static double tKd = 0.0015;
+    public static double tKd = 0.01;
 
     public static double hKp = 0.0027;
 
@@ -38,10 +38,10 @@ public class SubConstants {
 
     public static double dropperMid = 0.42;
 
-    public static double alignerOpen = 0.44;
+    public static double alignerOpen = 0.46;
     // change 0.3 to 0.2
 
-    public static double alignerClose = 0.55;
+    public static double alignerClose = 0.62;
 
     public static double dropperCollect = 0.72;
     public static double depositOpen = 0.27;
@@ -50,7 +50,7 @@ public class SubConstants {
 //    public static double grabberOpen = 0.81;
     public static double grabberClose = 0.5;
 //    public static double grabberClose = 0.5;
-    public static double armFeedforward = 0.2;
+    public static double armFeedforward = 0.23;
     // 0.2
     public static double degpervolt=(1.423-0.584)/90;
 

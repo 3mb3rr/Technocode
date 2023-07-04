@@ -19,6 +19,7 @@ public class tArmDrop extends CommandBase {
     @Override
     public void initialize() {
         IntakeSub.armState = IntakeSubsystem.Arm.dropping;
+        SubConstants.armFeedforward = 0.2;
         IntakeSub.armToAngle(87);
         IntakeSub.grotateToAngle(0);
     }
@@ -26,6 +27,7 @@ public class tArmDrop extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         IntakeSub.armState = IntakeSubsystem.Arm.holding;
+        SubConstants.armFeedforward = 0.23;
     }
     @Override
     public boolean isFinished() {

@@ -22,7 +22,7 @@ public class tArmDown extends CommandBase {
         IntakeSub.armToAngle(-16);
         //change: -15 to -15
         IntakeSub.grotateToAngle(16);
-        IntakeSub.fallenCone = true;
+        IntakeSub.fallenCone = false;
         //change: 15 to
     }
 

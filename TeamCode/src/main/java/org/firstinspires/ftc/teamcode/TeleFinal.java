@@ -143,6 +143,7 @@ public class TeleFinal extends LinearOpMode {
             if((mechOp.getRightY()>0.1) || (mechOp.getRightY()<-0.1)){
                 IntakeSub.grotateLevel(true);
                 IntakeSub.armToAngle(IntakeSub.armTargetAngle- (mechOp.getRightY()*2.5));
+                telemetry.addLine("arm recieving power");
             }
             DepositSub.setTTPower(0.5 * (mechOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - mechOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)));
             if (0.5 * (mechOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - mechOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER))<0.05){DepositSub.turntableToAngle((int)DepositSub.getTTAngle());}

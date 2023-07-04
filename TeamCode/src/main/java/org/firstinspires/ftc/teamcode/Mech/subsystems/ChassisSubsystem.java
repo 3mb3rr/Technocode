@@ -126,7 +126,7 @@ public class ChassisSubsystem extends SubsystemBase {
     }
 
     public boolean atCorrectPosition(){
-        if((getX()<(egetX()+0.5)) && (getX()>(egetX()-0.5)) && (getY()>(egetY()-0.5)) && (getY()<(egetY()+0.5)) && (getHeading()>(egetHeading()-0.7))&& (getHeading()<(egetHeading()+0.7))){
+        if((getX()<(egetX()+0.5)) && (getX()>(egetX()-0.5)) && (getY()>(egetY()-0.5)) && (getY()<(egetY()+0.5)) && (getHeading()>(egetHeading()-0.3))&& (getHeading()<(egetHeading()+0.3))){
                 return true;
         }
         return false;
@@ -168,6 +168,9 @@ public class ChassisSubsystem extends SubsystemBase {
     public void imuReset(){
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         imu.initialize(parameters);
+    }
+    public void setWheelPowers(double leftFront, double leftRear, double rightRear, double rightFront){
+        drive.setMotorPowers(leftFront, leftRear, rightRear, rightFront);
     }
     @Override
     public void periodic(){
