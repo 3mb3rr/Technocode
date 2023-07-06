@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.VisionBase.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.VisionBase.poleDistanceDetection;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -24,8 +25,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 public class Camera extends SubsystemBase {
-    OpenCvCamera camera;
+    OpenCvCamera camera, ttCamera;
     public static AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    public static poleDistanceDetection poleDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -49,15 +51,19 @@ public class Camera extends SubsystemBase {
         register();
         int cameraMonitorViewId = hMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        ttCamera = OpenCvCameraFactory.getInstance().createWebcam(hMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        poleDetectionPipeline = new poleDistanceDetection();
 
         camera.setPipeline(aprilTagDetectionPipeline);
+        ttCamera.setPipeline(poleDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPSIDE_DOWN);
+                ttCamera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -66,6 +72,9 @@ public class Camera extends SubsystemBase {
 
             }
         });
+    }
+    public int getPoleError(){
+        return poleDetectionPipeline.getDistance();
     }
 
 

@@ -30,6 +30,7 @@
         private final DcMotorEx arm;
         private final DistanceSensor gSensor;
         public boolean grabfailed = false;
+        public boolean botCommandComplete = true;
         PIDCoefficients coefficients = new PIDCoefficients(SubConstants.aKp, SubConstants.aKi, SubConstants.aKd);
         BasicPID controller = new BasicPID(coefficients);
         public ElapsedTime slideTime = new ElapsedTime();

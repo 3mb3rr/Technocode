@@ -27,11 +27,17 @@ public class SubConstants {
     public static double aKi = 0;
 
     public static double aKd = 0.02;
+    public static double cKp = 0.0065;
+
+    public static double cKi = 0;
+
+    public static double cKd = 0;
 
     public static int hPolePos = 1050;
     public static int mPolePos = 400;
 
     public static int ttRightAngle = -44;
+    public static int ttLeftAngle = 37;
     //change -53 to -45
 
     public static double dropperDrop = 0.29;

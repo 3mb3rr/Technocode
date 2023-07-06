@@ -22,8 +22,9 @@ public class poleDistanceDetection extends OpenCvPipeline {
     public static double strictLowS = 150;
     public static double strictHighS = 255;
     public double lArea = 0;
-    public int cx, cy;
+    public int cx, cy, fcx, fcy, zcx, zcy;
     public boolean inputtt, inputtt2 = false;
+    public boolean poleDetected = false;
 
     public int contourNo;
     public poleDistanceDetection() {
@@ -33,7 +34,10 @@ public class poleDistanceDetection extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Mat mat = new Mat();
-        Mat output = input;
+        Mat output = new Mat();
+        Mat input2 = new Mat();
+        input.copyTo(output);
+        input.copyTo(input2);
 
         //mat turns into HSV value
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
@@ -42,7 +46,7 @@ public class poleDistanceDetection extends OpenCvPipeline {
         }
 
         // lenient bounds will filter out near yellow, this should filter out all near yellow things(tune this if needed)
-        Scalar lowHSV = new Scalar(15, 20, 5); // lenient lower bound HSV for yellow
+        Scalar lowHSV = new Scalar(15, 30, 20); // lenient lower bound HSV for yellow
         Scalar highHSV = new Scalar(28, 255, 255); // lenient higher bound HSV for yellow
 
         Mat thresh = new Mat();
@@ -69,59 +73,76 @@ public class poleDistanceDetection extends OpenCvPipeline {
         //apply strict HSV filter onto scaledMask to get rid of any yellow other than pole
         Core.inRange(scaledMask, strictLowHSV, strictHighHSV, scaledThresh);
 
-        Mat edges = new Mat();
-//        //detect edges(only useful for showing result)(you can delete)
-        Imgproc.Canny(scaledThresh, edges, 100, 200);
-
-        //contours, apply post processing to information
-        List<MatOfPoint> contours = new ArrayList<>();
-        Mat hierarchy = new Mat();
-        //find contours, input scaledThresh because it has hard edges
-        Imgproc.findContours(scaledThresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-        for (int i = 0; i<contours.size(); i++){
-            if (Imgproc.contourArea(contours.get(i))>lArea){ lArea = Imgproc.contourArea(contours.get(i));
-                contourNo = i;
-            }
-        }
-        Mat contour = new Mat();
-        Imgproc.drawContours(contour, contours, -1, new Scalar(0, 255, 0), 3);
 
         Moments M = new Moments();
         M =Imgproc.moments(scaledThresh);
         cx = (int)(M.m10/M.m00);
         cy = (int)(M.m01/M.m00);
         Mat selection = new Mat();
-        Imgproc.rectangle(selection, new Point((cx-100), 0), new Point((cx+100), 448), new Scalar(255, 255, 255), -1);
+        Mat Selection = new Mat();
+        Mat fSelect = new Mat();
+        Imgproc.rectangle(input, new Point((cx-125), 0), new Point((cx+125), 448), new Scalar(255, 255, 255), -1);
+        Imgproc.cvtColor(input, Selection, Imgproc.COLOR_RGB2HSV);
+        Core.inRange(Selection, new Scalar(0, 0, 255), new Scalar(0, 0, 255), selection);
+        Core.bitwise_and(scaledThresh, scaledThresh, fSelect, selection);
 //        Core.bitwise_and(scaledThresh, scaledMask, contour, selection);
 //        //list of frames to reduce inconsistency, not too many so that it is still real-time, change the number from 5 if you want
-//        Moments Mm = new Moments();
-//        Mm =Imgproc.moments(contour);
-//        cx = (int)(Mm.m10/M.m00);
-//        cy = (int)(Mm.m01/M.m00);
-//        if (frameList.size() > 5) {
-//            frameList.remove(0);
-//        }
-//        Imgproc.line(input, new Point(cx, 448), new Point(cx, 0), new Scalar(0, 255, 255));
+
+        Moments f = new Moments();
+        f =Imgproc.moments(fSelect);
+        fcx = (int)(f.m10/f.m00);
+        fcy = (int)(f.m01/f.m00);
+        if (frameList.size() > 5) {
+            frameList.remove(0);
+        }
+        Mat selection2 = new Mat();
+        Mat Selection2 = new Mat();
+        Mat fSelect2 = new Mat();
+        Imgproc.rectangle(input2, new Point((fcx-75), 0), new Point((fcx+75), 448), new Scalar(255, 255, 255), -1);
+        Imgproc.cvtColor(input2, Selection2, Imgproc.COLOR_RGB2HSV);
+        Core.inRange(Selection2, new Scalar(0, 0, 255), new Scalar(0, 0, 255), selection2);
+        Core.bitwise_and(scaledThresh, scaledThresh, fSelect2, selection2);
+        Moments z = new Moments();
+        z =Imgproc.moments(fSelect2);
+        zcx = (int)(z.m10/z.m00);
+        zcy = (int)(z.m01/z.m00);
+        if (frameList.size() > 5) {
+            frameList.remove(0);
+        }
+        if(Core.countNonZero(fSelect2)>3000){
+            poleDetected = true;
+        Imgproc.line(output, new Point(zcx, 448), new Point(zcx, 0), new Scalar(0, 255, 255));}
+        else poleDetected=false;
 //        Imgproc.line(scaledThresh, new Point(cx, 448), new Point(cx, 0), new Scalar(0, 255, 255));
         //release all the data
 //        input.release();
         if(inputtt){
-            scaledThresh.copyTo(input);}
+            fSelect2.copyTo(output);}
         if(inputtt2){
-            contour.copyTo(input);}
+            selection.copyTo(output);}
         scaledThresh.release();
         scaledMask.release();
         mat.release();
         masked.release();
-        edges.release();
         thresh.release();
+        selection.release();
+        Selection.release();
+        fSelect.release();
+        selection2.release();
+        Selection2.release();
+        fSelect2.release();
 
         //change the return to whatever mat you want
         //for example, if I want to look at the lenient thresh:
         // return thresh;
         // note that you must not do thresh.release() if you want to return thresh
         // you also need to release the input if you return thresh(release as much as possible)
-        return input;
+        return output;
+    }
+    public int getDistance(){
+        if(poleDetected){
+        return (228-zcx);}
+        else return(1000);
     }
 
 

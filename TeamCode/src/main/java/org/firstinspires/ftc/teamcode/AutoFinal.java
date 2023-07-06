@@ -119,6 +119,8 @@ public class AutoFinal extends LinearOpMode {
             telemetry.addData("zone", camera.parkingZone);
             telemetry.addData("insight", camera.inSight);
             telemetry.addData("grabberCone", IntakeSub.hasCone());
+            telemetry.addData("heading", ChassisSub.getHeading());
+
             telemetry.addData("holding", ChassisSub.chassisState);
             telemetry.addData("atCorrectPosition", ChassisSub.atCorrectPosition());
             telemetry.addData("deposithascone", IntakeSub.depositCone());

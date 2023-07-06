@@ -3,24 +3,35 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 
+import org.firstinspires.ftc.teamcode.Mech.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-public class ttTurnLeft extends CommandBase {
+public class ttCamera extends CommandBase {
 
     // The subsystem the command runs on
     private final DepositSubsystem DepositSub;
+    private final Camera camera;
 
-    public ttTurnLeft(DepositSubsystem subsystem) {
+    public ttCamera(DepositSubsystem subsystem, Camera subsystem2) {
         DepositSub = subsystem;
+        camera = subsystem2;
         addRequirements(DepositSub);
     }
 
     @Override
     public void initialize() {
-        DepositSub.turntableToAngle(SubConstants.ttLeftAngle);
         DepositSub.ttState = DepositSub.ttState.turning;
+    }
+    @Override
+    public void execute() {
+        if (camera.getPoleError()==1000){
+            DepositSub.setTTPower(0.6);
+        }
+        else{
+            DepositSub.ttCorrect(camera.getPoleError());
+        }
     }
     @Override
     public void end(boolean interrupted) {
@@ -29,7 +40,7 @@ public class ttTurnLeft extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if((DepositSub.getTTVelocity()<2) && (DepositSub.getTTAngle()<(-SubConstants.ttLeftAngle+2.5)) && (DepositSub.getTTAngle()>(-SubConstants.ttLeftAngle-2.5)))
+        if((DepositSub.getTTVelocity()<2) && (camera.getPoleError()<5) && (camera.getPoleError()>-5))
         {return true;}
         return false;
     }

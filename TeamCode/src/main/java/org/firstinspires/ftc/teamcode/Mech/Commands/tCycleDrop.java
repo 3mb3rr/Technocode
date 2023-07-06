@@ -28,9 +28,8 @@ public class tCycleDrop extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                         new InstantCommand(() -> {DepositSub.hasCone(true);}),
                         new depositClose(DepositSub),
-                        new dropperMid(DepositSub),
-                        new highSlideOpen(vSlideSub),
                         new dropperDrop(DepositSub),
+                        new highSlideOpen(vSlideSub),
                         new WaitCommand(200),
                         new depositOpen(DepositSub),
                         new InstantCommand(() -> {DepositSub.hasCone(false);}),

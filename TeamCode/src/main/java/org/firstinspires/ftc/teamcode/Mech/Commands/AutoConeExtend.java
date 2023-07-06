@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Mech.Commands;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
@@ -22,6 +23,7 @@ public class AutoConeExtend extends SequentialCommandGroup {
     {
         addCommands (
                 new SequentialCommandGroup(
+                        new InstantCommand(() -> {IntakeSub.botCommandComplete = false;}),
                         new grabberOpen(IntakeSub),
                         new ParallelCommandGroup(
                                 new autoArmDown(IntakeSub),

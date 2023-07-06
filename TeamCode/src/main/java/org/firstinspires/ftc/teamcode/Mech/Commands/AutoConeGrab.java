@@ -62,8 +62,10 @@ public class AutoConeGrab extends SequentialCommandGroup {
                             SubConstants.conestackHeight--;
                         })
                 ),
+                new WaitCommand(50),
                 new grabberOpen(IntakeSub),
-                new WaitCommand(160)
+                new WaitCommand(100),
+                new InstantCommand(() -> {IntakeSub.botCommandComplete = true;})
         );
 
         addRequirements(IntakeSub);

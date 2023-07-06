@@ -23,7 +23,9 @@ public class DepositSubsystem extends SubsystemBase {
     public double targetTTAngle = 0;
     private final DcMotorEx turntable;
     PIDCoefficients coefficients = new PIDCoefficients(SubConstants.tKp, SubConstants.tKi, SubConstants.tKd);
+    PIDCoefficients coefficients2 = new PIDCoefficients(SubConstants.cKp, SubConstants.cKi, SubConstants.cKd);
     BasicPID controller = new BasicPID(coefficients);
+    BasicPID controller2 = new BasicPID(coefficients2);
     public ElapsedTime slideTime = new ElapsedTime();
     public enum Deposit {
         hasCone, noCone
@@ -90,6 +92,10 @@ public class DepositSubsystem extends SubsystemBase {
                 return true;
         }
         return false;
+    }
+    public void ttCorrect(int error){
+        targetTTAngle = 1000;
+            turntable.setPower(controller2.calculate(0, error));
     }
     public void hasCone(boolean decision){
         if(decision){depositState = Deposit.hasCone;}
