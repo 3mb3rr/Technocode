@@ -22,6 +22,7 @@ public class park extends CommandBase {
 
     @Override
     public void initialize() {
+        ChassisSub.chassisState = ChassisSubsystem.chassis.parking;
         if ((ChassisSub.trajectoryCompleted) && (!temp1)) {
             if (ChassisSub.BLorRR) {
                 if ((zone == 2) || (zone == 0))
@@ -45,14 +46,14 @@ public class park extends CommandBase {
 
         if((ChassisSub.trajectoryCompleted))
     {
-        ChassisSub.chassisState = ChassisSubsystem.chassis.holding;
+        ChassisSub.chassisState = ChassisSubsystem.chassis.parked;
     }
 
     }
 
     @Override
     public void end(boolean interrupted) {
-        ChassisSub.chassisState = ChassisSubsystem.chassis.holding;
+        ChassisSub.chassisState = ChassisSubsystem.chassis.parked;
     }
 
 

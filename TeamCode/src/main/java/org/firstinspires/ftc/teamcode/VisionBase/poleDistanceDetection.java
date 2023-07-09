@@ -25,7 +25,19 @@ public class poleDistanceDetection extends OpenCvPipeline {
     public int cx, cy, fcx, fcy, zcx, zcy;
     public boolean inputtt, inputtt2 = false;
     public boolean poleDetected = false;
-
+    Mat mat = new Mat();
+    Mat output = new Mat();
+    Mat input2 = new Mat();
+    Mat thresh = new Mat();
+    Mat masked = new Mat();
+    Mat scaledMask = new Mat();
+    Mat scaledThresh = new Mat();
+    Mat selection = new Mat();
+    Mat Selection = new Mat();
+    Mat fSelect = new Mat();
+    Mat selection2 = new Mat();
+    Mat Selection2 = new Mat();
+    Mat fSelect2 = new Mat();
     public int contourNo;
     public poleDistanceDetection() {
         frameList = new ArrayList<>();
@@ -33,9 +45,6 @@ public class poleDistanceDetection extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        Mat mat = new Mat();
-        Mat output = new Mat();
-        Mat input2 = new Mat();
         input.copyTo(output);
         input.copyTo(input2);
 
@@ -48,25 +57,16 @@ public class poleDistanceDetection extends OpenCvPipeline {
         // lenient bounds will filter out near yellow, this should filter out all near yellow things(tune this if needed)
         Scalar lowHSV = new Scalar(15, 30, 20); // lenient lower bound HSV for yellow
         Scalar highHSV = new Scalar(28, 255, 255); // lenient higher bound HSV for yellow
-
-        Mat thresh = new Mat();
-
         // Get a black and white image of yellow objects
         Core.inRange(mat, lowHSV, highHSV, thresh);
 
-        Mat masked = new Mat();
         //color the white portion of thresh in with HSV from mat
         //output into masked
         Core.bitwise_and(mat, mat, masked, thresh);
         //calculate average HSV values of the white thresh values
         Scalar average = Core.mean(masked, thresh);
-
-        Mat scaledMask = new Mat();
         //scale the average saturation to 150
         masked.convertTo(scaledMask, -1, 150 / average.val[1], 0);
-
-
-        Mat scaledThresh = new Mat();
         //you probably want to tune this
         Scalar strictLowHSV = new Scalar(0, strictLowS, 0); //strict lower bound HSV for yellow
         Scalar strictHighHSV = new Scalar(255, strictHighS, 255); //strict higher bound HSV for yellow
@@ -78,9 +78,6 @@ public class poleDistanceDetection extends OpenCvPipeline {
         M =Imgproc.moments(scaledThresh);
         cx = (int)(M.m10/M.m00);
         cy = (int)(M.m01/M.m00);
-        Mat selection = new Mat();
-        Mat Selection = new Mat();
-        Mat fSelect = new Mat();
         Imgproc.rectangle(input, new Point((cx-125), 0), new Point((cx+125), 448), new Scalar(255, 255, 255), -1);
         Imgproc.cvtColor(input, Selection, Imgproc.COLOR_RGB2HSV);
         Core.inRange(Selection, new Scalar(0, 0, 255), new Scalar(0, 0, 255), selection);
@@ -95,10 +92,7 @@ public class poleDistanceDetection extends OpenCvPipeline {
         if (frameList.size() > 5) {
             frameList.remove(0);
         }
-        Mat selection2 = new Mat();
-        Mat Selection2 = new Mat();
-        Mat fSelect2 = new Mat();
-        Imgproc.rectangle(input2, new Point((fcx-75), 0), new Point((fcx+75), 448), new Scalar(255, 255, 255), -1);
+        Imgproc.rectangle(input2, new Point((fcx-50), 0), new Point((fcx+50), 448), new Scalar(255, 255, 255), -1);
         Imgproc.cvtColor(input2, Selection2, Imgproc.COLOR_RGB2HSV);
         Core.inRange(Selection2, new Scalar(0, 0, 255), new Scalar(0, 0, 255), selection2);
         Core.bitwise_and(scaledThresh, scaledThresh, fSelect2, selection2);
@@ -109,9 +103,9 @@ public class poleDistanceDetection extends OpenCvPipeline {
         if (frameList.size() > 5) {
             frameList.remove(0);
         }
-        if(Core.countNonZero(fSelect2)>3000){
+        if(Core.countNonZero(fSelect2)>6000){
             poleDetected = true;
-        Imgproc.line(output, new Point(zcx, 448), new Point(zcx, 0), new Scalar(0, 255, 255));}
+        Imgproc.line(output, new Point(zcx, 600), new Point(zcx, 0), new Scalar(0, 255, 255));}
         else poleDetected=false;
 //        Imgproc.line(scaledThresh, new Point(cx, 448), new Point(cx, 0), new Scalar(0, 255, 255));
         //release all the data
@@ -131,6 +125,8 @@ public class poleDistanceDetection extends OpenCvPipeline {
         selection2.release();
         Selection2.release();
         fSelect2.release();
+//        input.release();
+        input2.release();
 
         //change the return to whatever mat you want
         //for example, if I want to look at the lenient thresh:
@@ -141,7 +137,7 @@ public class poleDistanceDetection extends OpenCvPipeline {
     }
     public int getDistance(){
         if(poleDetected){
-        return (228-zcx);}
+        return (400-zcx);}
         else return(1000);
     }
 

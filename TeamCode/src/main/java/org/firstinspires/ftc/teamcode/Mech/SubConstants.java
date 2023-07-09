@@ -10,9 +10,9 @@ public class SubConstants {
     public static double vKd = 0.002;
 //    increase vkd in case of oscillation
 //    public static double vKd = 0.01;
-    public static double tKp = 0.04;
+    public static double tKp = 0.038;
 
-    public static double tKi = 0.005;
+    public static double tKi = 0.002;
 //    public static double tKi = 0.002;
     public static double tKd = 0.01;
 
@@ -27,20 +27,20 @@ public class SubConstants {
     public static double aKi = 0;
 
     public static double aKd = 0.02;
-    public static double cKp = 0.0065;
+    public static double cKp = 0.001;
 
     public static double cKi = 0;
 
     public static double cKd = 0;
 
     public static int hPolePos = 1050;
-    public static int mPolePos = 400;
+    public static int mPolePos = 510;
 
     public static int ttRightAngle = -44;
-    public static int ttLeftAngle = 37;
+    public static int ttLeftAngle = 40;
     //change -53 to -45
 
-    public static double dropperDrop = 0.29;
+    public static double dropperDrop = 0;
 
     public static double dropperMid = 0.42;
 
@@ -49,12 +49,12 @@ public class SubConstants {
 
     public static double alignerClose = 0.62;
 
-    public static double dropperCollect = 0.72;
+    public static double dropperCollect = 1;
     public static double depositOpen = 0.27;
     public static double depositClose = 0;
     public static double grabberOpen = 0.81;
 //    public static double grabberOpen = 0.81;
-    public static double grabberClose = 0.5;
+    public static double grabberClose = 0.54;
 //    public static double grabberClose = 0.5;
     public static double armFeedforward = 0.23;
     // 0.2
@@ -62,10 +62,10 @@ public class SubConstants {
 
     public static double degspertick=360/(1425.1*3);
     public static double grotatePosPerDeg=0.0038;
-    public static int[] armAngle = {10, 2 , -4, -11, -15};
+    public static int[] armAngle = {11, 2 , -4, -11, -15};
     //change: 10 to 8, 6 t0 6, 0 to 0,-13 to -12,3-15 TO -14
 //    public static int[] hSlidePos = {450, 465, 465, 475, 480, 480};
     // 460, 465, 460, 465, 470
-    public static int hSlidePos = 330;
+    public static int hSlidePos = 340;
     public static int conestackHeight = 5;
 }

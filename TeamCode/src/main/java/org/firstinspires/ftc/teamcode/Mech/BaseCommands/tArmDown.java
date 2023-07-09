@@ -19,9 +19,10 @@ public class tArmDown extends CommandBase {
     @Override
     public void initialize() {
         IntakeSub.armState = IntakeSubsystem.Arm.grabbing;
-        IntakeSub.armToAngle(-16);
+        SubConstants.armFeedforward = 0.29;
+        IntakeSub.armToAngle(-19);
         //change: -15 to -15
-        IntakeSub.grotateToAngle(16);
+        IntakeSub.grotateToAngle(19);
         IntakeSub.fallenCone = false;
         //change: 15 to
     }
@@ -29,6 +30,7 @@ public class tArmDown extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         IntakeSub.armState = IntakeSubsystem.Arm.holding;
+        SubConstants.armFeedforward = 0.23;
     }
     @Override
     public boolean isFinished() {

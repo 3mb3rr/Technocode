@@ -12,6 +12,7 @@ public class slideToConestack extends CommandBase {
     // The subsystem the command runs on
     private final hSlideSubsystem hSlideSub;
     private final IntakeSubsystem IntakeSub;
+    private int oSlidePos = 0;
 
     public slideToConestack(hSlideSubsystem subsystem, IntakeSubsystem subsystem2) {
         hSlideSub = subsystem;
@@ -22,7 +23,8 @@ public class slideToConestack extends CommandBase {
     @Override
     public void initialize() {
         hSlideSub.hSlideState = hSlideSubsystem.HSlide.extending;
-        hSlideSub.hSlideSetPower(0.5);
+        hSlideSub.hSlideSetPower(0.65);
+        oSlidePos = (int)hSlideSub.getSlidePosition();
     }
 
     @Override
@@ -33,7 +35,7 @@ public class slideToConestack extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if((hSlideSub.slideCurrentSpike()) || (IntakeSub.hasCone()) || ((hSlideSub.getSlideVelocity()<0.2) && (hSlideSub.getSlidePosition()>430)))
+        if((hSlideSub.slideCurrentSpike()) || (IntakeSub.hasCone()) || ((hSlideSub.getSlideVelocity()<0.2) && (hSlideSub.getSlidePosition()>(oSlidePos+100))))
         {return true;}
         return false;
     }

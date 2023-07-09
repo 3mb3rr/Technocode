@@ -29,7 +29,7 @@ public class ttTurnLeft extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if((DepositSub.getTTVelocity()<2) && (DepositSub.getTTAngle()<(-SubConstants.ttLeftAngle+2.5)) && (DepositSub.getTTAngle()>(-SubConstants.ttLeftAngle-2.5)))
+        if((DepositSub.getTTVelocity()<2) && (DepositSub.getTTAngle()<(SubConstants.ttLeftAngle+2.5)) && (DepositSub.getTTAngle()>(SubConstants.ttLeftAngle-2.5)))
         {return true;}
         return false;
     }

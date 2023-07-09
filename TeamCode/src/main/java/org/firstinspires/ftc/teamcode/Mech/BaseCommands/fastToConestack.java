@@ -3,37 +3,37 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 
+import org.firstinspires.ftc.teamcode.Mech.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.hSlideSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 
-public class hSlideSafeOpen extends CommandBase {
+public class fastToConestack extends CommandBase {
 
     // The subsystem the command runs on
     private final hSlideSubsystem hSlideSub;
-    private int target = (SubConstants.hSlidePos);
+    private final IntakeSubsystem IntakeSub;
 
-    public hSlideSafeOpen(hSlideSubsystem subsystem) {
+    public fastToConestack(hSlideSubsystem subsystem, IntakeSubsystem subsystem2) {
         hSlideSub = subsystem;
+        IntakeSub = subsystem2;
         addRequirements(hSlideSub);
     }
 
     @Override
     public void initialize() {
         hSlideSub.hSlideState = hSlideSubsystem.HSlide.extending;
-//        target = (SubConstants.hSlidePos[5-SubConstants.conestackHeight]);
-        target = (420);
-        hSlideSub.hSlideToPosition(target);
+        hSlideSub.hSlideSetPower(0.75);
     }
 
     @Override
     public void end(boolean interrupted) {
-        hSlideSub.hSlideToPosition(target);
+        hSlideSub.hSlideToPosition((int)hSlideSub.getSlidePosition());
         hSlideSub.hSlideState = hSlideSubsystem.HSlide.holding;
     }
 
     @Override
     public boolean isFinished() {
-        if(((hSlideSub.getSlideVelocity()<2) && (hSlideSub.getSlidePosition()<(target+2)) && (hSlideSub.getSlidePosition()>(target-2))) || (hSlideSub.getSlideVelocity()<1))
+        if((hSlideSub.slideCurrentSpike()) || (IntakeSub.hasCone()) || ((hSlideSub.getSlideVelocity()<0.2) && (hSlideSub.getSlidePosition()>430)))
         {return true;}
         return false;
     }

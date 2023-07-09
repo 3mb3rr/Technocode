@@ -10,22 +10,21 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.MediumSlideOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.depositClose;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperMid;
-import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnLeft;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttMidLeft;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttMidRight;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.depositOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperDrop;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperGrab;
-import org.firstinspires.ftc.teamcode.Mech.BaseCommands.highSlideOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnMiddle;
-import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnRight;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.vSlideClose;
 
 import java.util.function.BooleanSupplier;
 
-public class AutoSafeDrop extends SequentialCommandGroup {
+public class AutoMidDrop extends SequentialCommandGroup {
 
-    public AutoSafeDrop(DepositSubsystem DepositSub, vSlideSubsystem vSlideSub, boolean right)
+    public AutoMidDrop(DepositSubsystem DepositSub, vSlideSubsystem vSlideSub, boolean right)
     {
         BooleanSupplier RIGHT = new BooleanSupplier() {
             @Override
@@ -38,7 +37,7 @@ public class AutoSafeDrop extends SequentialCommandGroup {
                         new InstantCommand(() -> {DepositSub.hasCone(true);}),
                         new depositClose(DepositSub),
                         new dropperMid(DepositSub),
-                        new ConditionalCommand(new ttTurnRight(DepositSub), new ttTurnLeft(DepositSub), RIGHT),
+                        new ConditionalCommand(new ttMidRight(DepositSub), new ttMidLeft(DepositSub), RIGHT),
                         new MediumSlideOpen(vSlideSub),
                         new dropperDrop(DepositSub),
                         new WaitCommand(200),

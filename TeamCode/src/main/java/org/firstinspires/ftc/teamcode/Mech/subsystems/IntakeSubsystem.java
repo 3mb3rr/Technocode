@@ -28,7 +28,7 @@
         public boolean level = false;
         public boolean depositCone = false;
         private final DcMotorEx arm;
-        private final DistanceSensor gSensor;
+        private final DistanceSensor gSensor, gSensor2;
         public boolean grabfailed = false;
         public boolean botCommandComplete = true;
         PIDCoefficients coefficients = new PIDCoefficients(SubConstants.aKp, SubConstants.aKi, SubConstants.aKd);
@@ -49,6 +49,7 @@
             arm =  hMap.get(DcMotorEx.class, "arm");
             Pot = hMap.get(AnalogInput.class, "armpot");
             gSensor = hMap.get(DistanceSensor.class, "grabberSensor");
+            gSensor2 = hMap.get(DistanceSensor.class, "grabberSensor2");
             armAngle = (Pot.getVoltage()-0.584)/SubConstants.degpervolt;
             arm.setDirection(DcMotorSimple.Direction.REVERSE);
             grotateToAngle(0);
@@ -84,7 +85,7 @@
 
 
         public boolean hasCone() {
-            if(getDistance()<7) {
+            if((getDistance1()<5) || (getDistance2()<5)) {
                 grabberState = Grabber.hasCone;
             }
             else grabberState = Grabber.noCone;
@@ -94,8 +95,11 @@
             }
             return false;
         }
-        public double getDistance(){
+        public double getDistance1(){
             return gSensor.getDistance(DistanceUnit.CM);
+        }
+        public double getDistance2(){
+            return gSensor2.getDistance(DistanceUnit.CM);
         }
         public void hasCone(boolean decision){
 

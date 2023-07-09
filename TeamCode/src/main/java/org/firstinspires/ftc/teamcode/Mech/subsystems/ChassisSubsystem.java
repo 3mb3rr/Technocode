@@ -35,7 +35,7 @@ public class ChassisSubsystem extends SubsystemBase {
     public Trajectory t1;
     double x, y, turn;
     double xf, yf, turnf;
-    double lastTime = -1;
+    double lastTime, lastTime2 = -1;
     public boolean trajectoryCompleted = false;
     public boolean holdCompleted = true;
     SampleMecanumDrive drive;
@@ -45,10 +45,11 @@ public class ChassisSubsystem extends SubsystemBase {
     public double xInput = 0;
     public double yInput = 0;
     public double turnInput = 0;
+    private boolean pushTemp = false;
 
-
+    ElapsedTime pushedTimer = new ElapsedTime();
     public enum chassis{
-        driving, holding, tDriving
+        driving, holding, parking, parked, correcting
     }
 
     public ElapsedTime timer = new ElapsedTime();
@@ -79,7 +80,54 @@ public class ChassisSubsystem extends SubsystemBase {
                     trajectoryCompleted = true;
                 })
                 .build();
-        drive.followTrajectorySequenceAsync(t1);
+        drive.followTrajectorySequence(t1);
+    }
+    public void splineTo(Pose2d targetPos1, double endTangent){
+        trajectoryCompleted = false;
+        expectedPos=targetPos1;
+        TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
+                .resetVelConstraint()
+                .splineToLinearHeading(targetPos1, endTangent)
+                .addDisplacementMarker(() -> {
+                    trajectoryCompleted = true;
+                })
+                .build();
+        drive.followTrajectorySequence(t1);
+    }
+    public void splineTo(Pose2d targetPos1, double endTangent1, Pose2d targetPos2, double endTangent2){
+        trajectoryCompleted = false;
+        expectedPos=targetPos1;
+        TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
+                .resetVelConstraint()
+                .splineToLinearHeading(targetPos1, Math.toRadians(endTangent1))
+                .splineToLinearHeading(targetPos2, Math.toRadians(endTangent2))
+                .addDisplacementMarker(() -> {
+                    trajectoryCompleted = true;
+                })
+                .build();
+        drive.followTrajectorySequence(t1);
+    }
+    public void simpleMoveF(int value){
+        trajectoryCompleted = false;
+        TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
+                .resetVelConstraint()
+                .forward(value)
+                .addDisplacementMarker(() -> {
+                    trajectoryCompleted = true;
+                })
+                .build();
+        drive.followTrajectorySequence(t1);
+    }
+    public void simpleMoveB(int value){
+        trajectoryCompleted = false;
+        TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
+                .resetVelConstraint()
+                .back(value)
+                .addDisplacementMarker(() -> {
+                    trajectoryCompleted = true;
+                })
+                .build();
+        drive.followTrajectorySequence(t1);
     }
     public void holdTo(Pose2d targetPos1){
         TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
@@ -89,7 +137,7 @@ public class ChassisSubsystem extends SubsystemBase {
                 })
                 .build();
         holdCompleted = false;
-        drive.followTrajectorySequenceAsync(t1);
+        drive.followTrajectorySequence(t1);
     }
     public void moveTo(Pose2d targetPos1, Pose2d targetPos2){
         expectedPos=targetPos2;
@@ -130,6 +178,12 @@ public class ChassisSubsystem extends SubsystemBase {
                 return true;
         }
         return false;
+    }
+    public boolean pushed(){
+        if((getX()<(egetX()+4)) && (getX()>(egetX()-4)) && (getY()>(egetY()-4)) && (getY()<(egetY()+4)) && (getHeading()>(egetHeading()-12))&& (getHeading()<(egetHeading()+12))){
+            return false;
+        }
+        return true;
     }
     public double getX(){
         return robotPos.getX();
@@ -182,6 +236,16 @@ public class ChassisSubsystem extends SubsystemBase {
                     lastTime= timer.milliseconds();
                 if(holdingTemp){holdTo(new Pose2d((egetX()+0.000001), egetY(), Math.toRadians(egetHeading())));}
                 else{holdTo(expectedPos);}}
+            case parked:
+                if((timer.milliseconds()>(lastTime+500)) && (holdCompleted) && (!atCorrectPosition())){
+                    lastTime= timer.milliseconds();
+                    if(holdingTemp){holdTo(new Pose2d((egetX()+0.000001), egetY(), Math.toRadians(egetHeading())));}
+                    else{holdTo(expectedPos);}}
+            case correcting:
+                if((timer.milliseconds()>(lastTime+500)) && (holdCompleted) && (!atCorrectPosition())){
+                    lastTime= timer.milliseconds();
+                    if(holdingTemp){holdTo(new Pose2d((egetX()+0.000001), egetY(), Math.toRadians(egetHeading())));}
+                    else{holdTo(expectedPos);}}
 
         }
         if(!auto){
@@ -190,7 +254,7 @@ public class ChassisSubsystem extends SubsystemBase {
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             double r = Math.hypot(-yInput, -xInput);
             double robotAngle = Math.atan2(-yInput, -xInput) - Math.PI / 4  - ((angles.firstAngle/180)*Math.PI);
-            double rightX = (turnInput)/1.35;
+            double rightX = (turnInput)/1.5;
             final double v1 = (r * Math.cos(robotAngle) + rightX);
             final double v2 = (r * Math.sin(robotAngle) + rightX);
             final double v3 = (r * Math.cos(robotAngle) - rightX);

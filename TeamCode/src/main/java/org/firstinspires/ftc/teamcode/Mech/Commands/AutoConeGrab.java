@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode.Mech.Commands;
 
-import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.armDrop;
-import org.firstinspires.ftc.teamcode.Mech.BaseCommands.autoArmDown;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.grabberGrab;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.grabberOpen;
-import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideAutoOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.slideToConestack;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
@@ -54,7 +50,7 @@ public class AutoConeGrab extends SequentialCommandGroup {
                 new WaitUntilCommand(DepConeDropped),
                 new slideToConestack(hSlideSub, IntakeSub),
                 new grabberGrab(IntakeSub),
-                new WaitCommand(400),
+                new WaitCommand(300),
                 new ParallelCommandGroup(
                         new armDrop(IntakeSub),
                         new hSlideClose(hSlideSub),
@@ -62,9 +58,8 @@ public class AutoConeGrab extends SequentialCommandGroup {
                             SubConstants.conestackHeight--;
                         })
                 ),
-                new WaitCommand(50),
                 new grabberOpen(IntakeSub),
-                new WaitCommand(100),
+                new WaitCommand(400),
                 new InstantCommand(() -> {IntakeSub.botCommandComplete = true;})
         );
 

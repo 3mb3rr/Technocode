@@ -32,7 +32,7 @@ public class hSlideTOpen extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if(((hSlideSub.getSlideVelocity()<2) && (hSlideSub.getSlidePosition()<(target+2)) && (hSlideSub.getSlidePosition()>(target-2))) || (hSlideSub.getSlideVelocity()<1))
+        if((((hSlideSub.getSlideVelocity()<2) && (hSlideSub.getSlidePosition()<(target+2)) && (hSlideSub.getSlidePosition()>(target-2))) || (hSlideSub.getSlideVelocity()<1)) || (hSlideSub.getSlidePosition()>400))
         {return true;}
         return false;
     }

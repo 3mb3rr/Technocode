@@ -2,20 +2,24 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisReposition;
+import org.firstinspires.ftc.teamcode.Mech.Commands.Retract;
 import org.firstinspires.ftc.teamcode.Mech.Commands.chassisContestedPole;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeExtend;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeGrab;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisRetreat;
 import org.firstinspires.ftc.teamcode.Mech.Commands.park;
 import org.firstinspires.ftc.teamcode.Mech.Commands.zoneDetection;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
@@ -29,10 +33,8 @@ import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 import java.util.function.BooleanSupplier;
 
 @Autonomous
-public class AutoFinal extends LinearOpMode {
+public class AutoSafeRight extends LinearOpMode {
 
-    public Servo grotate;
-    public boolean running = true;
 
     public void runOpMode() {
 
@@ -46,6 +48,7 @@ public class AutoFinal extends LinearOpMode {
         Camera camera = new Camera(hardwareMap);
         CommandScheduler.getInstance().reset();
         SubConstants.conestackHeight = 5;
+        ElapsedTime timer = new ElapsedTime();
         BooleanSupplier DepositCone = new BooleanSupplier() {
             @Override
             public boolean getAsBoolean() {
@@ -60,7 +63,7 @@ public class AutoFinal extends LinearOpMode {
         };
         CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub, camera);
         CommandScheduler.getInstance().schedule(new ParallelCommandGroup(new hSlideClose(hSlideSub), new zoneDetection(camera)).deadlineWith(new WaitUntilCommand(notInitLoop)));
-        while((!isStopRequested()) && (!isStarted())){
+        while ((!isStopRequested()) && (!isStarted())) {
             CommandScheduler.getInstance().run();
             telemetry.addLine("initialization");
 
@@ -68,72 +71,54 @@ public class AutoFinal extends LinearOpMode {
             telemetry.addData("insight", camera.inSight);
             telemetry.update();
         }
-        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new SequentialCommandGroup(new chassisContestedPole(ChassisSub), new ParallelCommandGroup(
-                        new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                        new SequentialCommandGroup(
-                                new AutoConeExtend(IntakeSub, hSlideSub),
-                                new AutoConeGrab(IntakeSub, hSlideSub))
-                ),
-        new ParallelCommandGroup(
-                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                new SequentialCommandGroup(
-                        new AutoConeExtend(IntakeSub, hSlideSub),
-                        new AutoConeGrab(IntakeSub, hSlideSub))
-        ),
-                        new ParallelCommandGroup(
-                                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                                new SequentialCommandGroup(
-                                        new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub))
-                        ),
-                        new ParallelCommandGroup(
-                                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                                new SequentialCommandGroup(
-                                        new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub))
-                        ),
-                        new ParallelCommandGroup(
-                                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                                new SequentialCommandGroup(
-                                        new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub))
-                        ),
-                new tArmDrop(IntakeSub),
-                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                new park(ChassisSub, camera.parkingZone)
-                )
-        ));
+
 //        new park(ChassisSub, camera.parkingZone));
+        timer.reset();
+        IntakeSub.botCommandComplete = true;
         while (!isStopRequested()) {
             CommandScheduler.getInstance().run();
             IntakeSub.depositCone(DepositSub.hasCone());
-//            if((SubConstants.conestackHeight!=0) && (!running)){
-//                CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
-//                    new AutoConeDrop(DepositSub, vSlideSub),
-//                    new SequentialCommandGroup(
-//                        new AutoConeExtend(IntakeSub, hSlideSub),
-//                        new AutoConeGrab(IntakeSub, hSlideSub, DepositCone))
-//                )
-//                );
-//            }
-            telemetry.addData("zone", camera.parkingZone);
-            telemetry.addData("insight", camera.inSight);
-            telemetry.addData("grabberCone", IntakeSub.hasCone());
-            telemetry.addData("heading", ChassisSub.getHeading());
+            if (timer.milliseconds() < 27500) {
+                if (ChassisSub.pushed() && (ChassisSub.chassisState == ChassisSubsystem.chassis.holding)) {
+                    CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup( new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new chassisRetreat(ChassisSub),
+                            new WaitCommand(200), new chassisReposition(ChassisSub), new InstantCommand(() -> {
+                        IntakeSub.botCommandComplete = true;
+                    })));
+                } else {
+                    if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight == 5)) {
+                        IntakeSub.botCommandComplete = false;
+                        CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new chassisContestedPole(ChassisSub), new ParallelCommandGroup(
+                                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                                new SequentialCommandGroup(
+                                        new AutoConeExtend(IntakeSub, hSlideSub),
+                                        new AutoConeGrab(IntakeSub, hSlideSub))
+                        )));
+                    } else if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight == 0)) {
+                        IntakeSub.botCommandComplete = false;
+                        CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new tArmDrop(IntakeSub),
+                                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                                new InstantCommand(() -> {
+                                    telemetry.addLine("parking reached");
+                                }),
+                                new park(ChassisSub, camera.parkingZone)));
+                    } else if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight < 5) && (SubConstants.conestackHeight > 0)) {
+                        CommandScheduler.getInstance().schedule( new ParallelCommandGroup(
+                                new AutoConeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                                new SequentialCommandGroup(
+                                        new AutoConeExtend(IntakeSub, hSlideSub),
+                                        new AutoConeGrab(IntakeSub, hSlideSub))
+                        ));
+                    }
+                }
+            } else {
+                if ((ChassisSub.chassisState == ChassisSubsystem.chassis.parking) || (ChassisSub.chassisState == ChassisSubsystem.chassis.parked)) {
 
-            telemetry.addData("holding", ChassisSub.chassisState);
-            telemetry.addData("atCorrectPosition", ChassisSub.atCorrectPosition());
-            telemetry.addData("deposithascone", IntakeSub.depositCone());
-            telemetry.addData("hclose", hSlideSub.hClose());
-            telemetry.addData("hclose", hSlideSub.hClose());
-            telemetry.addData("armState", IntakeSub.armState);
-            telemetry.addData("hslideState", hSlideSub.hSlideState);
-            telemetry.addData("autoextend", CommandScheduler.getInstance().isScheduled(new AutoConeExtend(IntakeSub, hSlideSub)));
-            telemetry.addData("autograb", CommandScheduler.getInstance().isScheduled(new AutoConeGrab(IntakeSub, hSlideSub)));
+                } else {
+                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new park(ChassisSub, camera.parkingZone)));
+                }
+            }
+            telemetry.addData("slide state", hSlideSub.hSlideState);
             telemetry.update();
         }
-//while(!isStopRequested()){
-//    vSlideSub.vSlideToPosition(300);
-//}
     }
 }

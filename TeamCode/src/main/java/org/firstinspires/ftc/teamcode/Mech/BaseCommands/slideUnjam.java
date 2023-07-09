@@ -6,13 +6,13 @@ import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.hSlideSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 
-public class hSlideSafeOpen extends CommandBase {
+public class slideUnjam extends CommandBase {
 
     // The subsystem the command runs on
     private final hSlideSubsystem hSlideSub;
     private int target = (SubConstants.hSlidePos);
 
-    public hSlideSafeOpen(hSlideSubsystem subsystem) {
+    public slideUnjam(hSlideSubsystem subsystem) {
         hSlideSub = subsystem;
         addRequirements(hSlideSub);
     }
@@ -21,7 +21,7 @@ public class hSlideSafeOpen extends CommandBase {
     public void initialize() {
         hSlideSub.hSlideState = hSlideSubsystem.HSlide.extending;
 //        target = (SubConstants.hSlidePos[5-SubConstants.conestackHeight]);
-        target = (420);
+        target = (int)(hSlideSub.getSlidePosition()+200);
         hSlideSub.hSlideToPosition(target);
     }
 

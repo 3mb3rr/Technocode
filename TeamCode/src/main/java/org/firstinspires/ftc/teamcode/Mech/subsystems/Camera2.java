@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mech.subsystems;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -24,7 +25,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-public class Camera extends SubsystemBase {
+public class Camera2 extends SubsystemBase {
     OpenCvCamera camera, ttCamera;
     public static AprilTagDetectionPipeline aprilTagDetectionPipeline;
     public static poleDistanceDetection poleDetectionPipeline;
@@ -44,24 +45,22 @@ public class Camera extends SubsystemBase {
     double tagsize = 0.166;
 
 
-     public int parkingZone = 0;
-     public boolean inSight;
+    public int parkingZone = 0;
+    public boolean inSight;
 
-    public Camera(final HardwareMap hMap) {
+    public Camera2(final HardwareMap hMap) {
         register();
         int cameraMonitorViewId = hMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-//        ttCamera = OpenCvCameraFactory.getInstance().createWebcam(hMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-
-        camera.setPipeline(aprilTagDetectionPipeline);
-//        ttCamera.setPipeline(poleDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        ttCamera = OpenCvCameraFactory.getInstance().createWebcam(hMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId);
+        poleDetectionPipeline = new poleDistanceDetection();
+        ttCamera.setPipeline(poleDetectionPipeline);
+        ttCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPSIDE_DOWN);
+                ttCamera.startStreaming(800,600, OpenCvCameraRotation.UPRIGHT);
+                FtcDashboard.getInstance().startCameraStream(ttCamera, 30);
             }
 
             @Override
@@ -70,24 +69,11 @@ public class Camera extends SubsystemBase {
 
             }
         });
-//        ttCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-//        {
-//            @Override
-//            public void onOpened()
-//            {
-//                ttCamera.startStreaming(800,600, OpenCvCameraRotation.UPRIGHT);
-//            }
-//
-//            @Override
-//            public void onError(int errorCode)
-//            {
-//
-//            }
-//        });
+
     }
-//    public int getPoleError(){
-//        return poleDetectionPipeline.getDistance();
-//    }
+    public int getPoleError(){
+        return poleDetectionPipeline.getDistance();
+    }
 
 
 

@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Testing;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,20 +18,23 @@ import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.IntakeSubsystem;
 
 @TeleOp
+@Disabled
 public class Testing extends LinearOpMode{
-    DcMotorEx hSlide, arm, turntable, vSlide;
+    DcMotorEx hSlide, arm, turntable, vSlide, leftFront, rightFront, leftRear, rightRear;
     Servo dropper;
     Servo aligner;
     Servo deposit, grabber, grotate;
     AnalogInput Pot;
-    DistanceSensor gSensor;
+    DistanceSensor gSensor, gSensor2;
     DigitalChannel ttSensor;
     DigitalChannel hClose, vClose;
 
     PIDCoefficients coefficients = new PIDCoefficients(SubConstants.tKp, SubConstants.tKi, SubConstants.tKd);
     BasicPID controller = new BasicPID(coefficients);
     ElapsedTime timer = new ElapsedTime();
+
     @Override
+
     public void runOpMode() {
         hSlide = hardwareMap.get(DcMotorEx.class, "hslide");
         hSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -48,7 +52,13 @@ public class Testing extends LinearOpMode{
         turntable = hardwareMap.get(DcMotorEx.class, "turntable");
         ttSensor = hardwareMap.get(DigitalChannel.class, "turntable");
         gSensor = hardwareMap.get(DistanceSensor.class, "grabberSensor");
+        gSensor2 = hardwareMap.get(DistanceSensor.class, "grabberSensor2");
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
         IntakeSubsystem IntakeSub = new IntakeSubsystem(hardwareMap);
+
 
         hSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         turntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -69,9 +79,25 @@ public class Testing extends LinearOpMode{
         vClose = hardwareMap.get(DigitalChannel.class, "vclose");
 
         waitForStart();
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+         double dropperPos = 1;
+        while(!isStopRequested() && !isStarted()){
+            telemetry.addData("dropper", dropperPos);
+            dropper.setPosition(dropperPos);
+            telemetry.update();
+        }
         while(!isStopRequested()){
-            hSlide.setPower(1);
-            telemetry.addData("amps", hSlide.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("dropper", dropperPos);
+            dropperPos-=0.01;
+            sleep(100);
+            dropper.setPosition(dropperPos);
             telemetry.update();
         }
 //        while(!isStopRequested()){

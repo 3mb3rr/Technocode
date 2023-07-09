@@ -8,7 +8,6 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.depositClose;
-import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperMid;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnLeft;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
@@ -22,9 +21,9 @@ import org.firstinspires.ftc.teamcode.Mech.BaseCommands.vSlideClose;
 
 import java.util.function.BooleanSupplier;
 
-public class AutoConeDrop extends SequentialCommandGroup {
+public class AutoFastDrop extends SequentialCommandGroup {
 
-    public AutoConeDrop(DepositSubsystem DepositSub, vSlideSubsystem vSlideSub, boolean right)
+    public AutoFastDrop(DepositSubsystem DepositSub, vSlideSubsystem vSlideSub, boolean right)
     {
         BooleanSupplier RIGHT = new BooleanSupplier() {
             @Override
@@ -36,18 +35,16 @@ public class AutoConeDrop extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                         new InstantCommand(() -> {DepositSub.hasCone(true);}),
                         new depositClose(DepositSub),
-                        new dropperMid(DepositSub),
-                        new ConditionalCommand(new ttTurnRight(DepositSub), new ttTurnLeft(DepositSub), RIGHT),
-                        new highSlideOpen(vSlideSub),
                         new dropperDrop(DepositSub),
-                        new WaitCommand(200),
+                        new ParallelCommandGroup(
+                        new ConditionalCommand(new ttTurnRight(DepositSub), new ttTurnLeft(DepositSub), RIGHT),
+                        new highSlideOpen(vSlideSub)),
                         new depositOpen(DepositSub),
                         new InstantCommand(() -> {DepositSub.hasCone(false);}),
-                        new WaitCommand(250),
+                        new WaitCommand(100),
                         new dropperGrab(DepositSub),
                         new WaitCommand(200),
-                        new ParallelCommandGroup(new vSlideClose(vSlideSub), new ttTurnMiddle(DepositSub))),
-                        new WaitCommand(100)
+                        new ParallelCommandGroup(new vSlideClose(vSlideSub), new ttTurnMiddle(DepositSub)))
         );
         addRequirements(DepositSub, vSlideSub);
     }
