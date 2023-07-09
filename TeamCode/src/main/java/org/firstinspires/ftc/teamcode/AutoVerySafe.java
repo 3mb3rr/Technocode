@@ -12,14 +12,19 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisReposition;
-import org.firstinspires.ftc.teamcode.Mech.Commands.AutoMidDrop;
+import org.firstinspires.ftc.teamcode.Mech.Commands.AutoSafeDrop;
+import org.firstinspires.ftc.teamcode.Mech.Commands.AutoSafeExtend;
+import org.firstinspires.ftc.teamcode.Mech.Commands.AutoSafeGrab;
 import org.firstinspires.ftc.teamcode.Mech.Commands.Retract;
+import org.firstinspires.ftc.teamcode.Mech.Commands.chassisContestedPole;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
+import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeExtend;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeGrab;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisRetreat;
-import org.firstinspires.ftc.teamcode.Mech.Commands.chassisMidPole;
+import org.firstinspires.ftc.teamcode.Mech.Commands.chassisSafe;
+import org.firstinspires.ftc.teamcode.Mech.Commands.chassisSafeInitial;
 import org.firstinspires.ftc.teamcode.Mech.Commands.park;
 import org.firstinspires.ftc.teamcode.Mech.Commands.zoneDetection;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
@@ -33,7 +38,7 @@ import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 import java.util.function.BooleanSupplier;
 
 @Autonomous
-public class AutoMidRight extends LinearOpMode {
+public class AutoVerySafe extends LinearOpMode {
 
 
     public void runOpMode() {
@@ -80,6 +85,7 @@ public class AutoMidRight extends LinearOpMode {
             IntakeSub.depositCone(DepositSub.hasCone());
             if (timer.milliseconds() < 27500) {
                 if (ChassisSub.pushed() && (ChassisSub.chassisState == ChassisSubsystem.chassis.holding)) {
+                    CommandScheduler.getInstance().cancelAll();
                     CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup( new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new chassisRetreat(ChassisSub),
                             new WaitCommand(200), new chassisReposition(ChassisSub), new InstantCommand(() -> {
                         IntakeSub.botCommandComplete = true;
@@ -87,26 +93,26 @@ public class AutoMidRight extends LinearOpMode {
                 } else {
                     if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight == 5)) {
                         IntakeSub.botCommandComplete = false;
-                        CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new chassisMidPole(ChassisSub), new ParallelCommandGroup(
-                                new AutoMidDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                        CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new chassisSafeInitial(ChassisSub), new chassisSafe(ChassisSub), new ParallelCommandGroup(
+                                new AutoSafeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
                                 new SequentialCommandGroup(
-                                        new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub))
+                                        new AutoSafeExtend(IntakeSub, hSlideSub),
+                                        new AutoSafeGrab(IntakeSub, hSlideSub, ChassisSub))
                         )));
                     } else if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight == 0)) {
                         IntakeSub.botCommandComplete = false;
                         CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new tArmDrop(IntakeSub),
-                                new AutoMidDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                                new AutoSafeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
                                 new InstantCommand(() -> {
                                     telemetry.addLine("parking reached");
                                 }),
                                 new park(ChassisSub, camera.parkingZone)));
                     } else if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight < 5) && (SubConstants.conestackHeight > 0)) {
                         CommandScheduler.getInstance().schedule( new ParallelCommandGroup(
-                                new AutoMidDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                                new AutoSafeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
                                 new SequentialCommandGroup(
-                                        new AutoConeExtend(IntakeSub, hSlideSub),
-                                        new AutoConeGrab(IntakeSub, hSlideSub))
+                                        new AutoSafeExtend(IntakeSub, hSlideSub),
+                                        new AutoSafeGrab(IntakeSub, hSlideSub, ChassisSub))
                         ));
                     }
                 }
@@ -114,6 +120,7 @@ public class AutoMidRight extends LinearOpMode {
                 if ((ChassisSub.chassisState == ChassisSubsystem.chassis.parking) || (ChassisSub.chassisState == ChassisSubsystem.chassis.parked)) {
 
                 } else {
+                    CommandScheduler.getInstance().cancelAll();
                     CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new park(ChassisSub, camera.parkingZone)));
                 }
             }

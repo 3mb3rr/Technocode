@@ -5,12 +5,12 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 
-public class chassisSafeInitial extends CommandBase {
+public class chassisSafe extends CommandBase {
 
     // The subsystem the command runs on
     private final ChassisSubsystem ChassisSub;
 
-    public chassisSafeInitial(ChassisSubsystem subsystem) {
+    public chassisSafe(ChassisSubsystem subsystem) {
         ChassisSub = subsystem;
         addRequirements(ChassisSub);
     }
@@ -19,21 +19,25 @@ public class chassisSafeInitial extends CommandBase {
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
         if(ChassisSub.BLorRR)
-            ChassisSub.moveTo(new Pose2d(-50, 2, Math.toRadians(0)), 88.5);
-        else ChassisSub.moveTo(new Pose2d(-50, -4, Math.toRadians(0)), -88);
+            ChassisSub.moveTo(new Pose2d(-50, -22, Math.toRadians(88.5)));
+        else ChassisSub.moveTo(new Pose2d(-50, 20, Math.toRadians(-88)));
     }
     @Override
     public void execute() {
+        if(ChassisSub.trajectoryCompleted){
+            ChassisSub.chassisState = ChassisSubsystem.chassis.correcting;
+        }
     }
 
     @Override
     public void end(boolean interrupted) {
+        ChassisSub.chassisState = ChassisSubsystem.chassis.holding;
     }
 
 
     @Override
     public boolean isFinished() {
-        return ChassisSub.trajectoryCompleted;
+        return ChassisSub.atCorrectPosition();
     }
 
 }

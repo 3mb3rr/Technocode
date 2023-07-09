@@ -21,7 +21,7 @@ public class hSlideSafeOpen extends CommandBase {
     public void initialize() {
         hSlideSub.hSlideState = hSlideSubsystem.HSlide.extending;
 //        target = (SubConstants.hSlidePos[5-SubConstants.conestackHeight]);
-        target = (420);
+        target = (900);
         hSlideSub.hSlideToPosition(target);
     }
 
@@ -33,7 +33,7 @@ public class hSlideSafeOpen extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if(((hSlideSub.getSlideVelocity()<2) && (hSlideSub.getSlidePosition()<(target+2)) && (hSlideSub.getSlidePosition()>(target-2))) || (hSlideSub.getSlideVelocity()<1))
+        if(((hSlideSub.getSlideVelocity()<2) && (hSlideSub.getSlidePosition()<(target+2)) && (hSlideSub.getSlidePosition()>(target-2))) || ((hSlideSub.getSlideVelocity()<1) && (hSlideSub.getSlidePosition()>800)))
         {return true;}
         return false;
     }
