@@ -29,7 +29,7 @@ public class ttMidRight extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if((DepositSub.getTTVelocity()<2) && (DepositSub.getTTAngle()<(SubConstants.ttRightAngle-12.5)) && (DepositSub.getTTAngle()>(SubConstants.ttRightAngle-7.5)))
+        if((DepositSub.getTTVelocity()<2) && (DepositSub.getTTAngle()>(SubConstants.ttRightAngle-12.5)) && (DepositSub.getTTAngle()<(SubConstants.ttRightAngle-7.5)))
         {return true;}
         return false;
     }

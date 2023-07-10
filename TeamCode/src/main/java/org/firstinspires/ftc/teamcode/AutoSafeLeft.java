@@ -82,6 +82,7 @@ public class AutoSafeLeft extends LinearOpMode {
             telemetry.addData("slide", vSlideSub.vSlideState);
             if (timer.milliseconds() < 27500) {
                 if (ChassisSub.pushed() && (ChassisSub.chassisState == ChassisSubsystem.chassis.holding)) {
+                    CommandScheduler.getInstance().cancelAll();
                     CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup( new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new chassisRetreat(ChassisSub),
                             new WaitCommand(200), new chassisReposition(ChassisSub), new InstantCommand(() -> {
                         IntakeSub.botCommandComplete = true;
@@ -116,6 +117,7 @@ public class AutoSafeLeft extends LinearOpMode {
                 if ((ChassisSub.chassisState == ChassisSubsystem.chassis.parking) || (ChassisSub.chassisState == ChassisSubsystem.chassis.parked)) {
 
                 } else {
+                    CommandScheduler.getInstance().cancelAll();
                     CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new park(ChassisSub, camera.parkingZone)));
                 }
                 telemetry.update();

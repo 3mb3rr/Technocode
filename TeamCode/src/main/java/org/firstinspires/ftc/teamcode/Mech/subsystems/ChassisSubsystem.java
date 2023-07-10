@@ -137,7 +137,7 @@ public class ChassisSubsystem extends SubsystemBase {
                 })
                 .build();
         holdCompleted = false;
-        drive.followTrajectorySequence(t1);
+        drive.followTrajectorySequenceAsync(t1);
     }
     public void moveTo(Pose2d targetPos1, Pose2d targetPos2){
         expectedPos=targetPos2;

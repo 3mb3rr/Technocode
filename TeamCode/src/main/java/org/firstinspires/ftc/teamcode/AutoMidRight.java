@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisReposition;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.midReposition;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoMidDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.Retract;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
@@ -81,7 +82,7 @@ public class AutoMidRight extends LinearOpMode {
             if (timer.milliseconds() < 27500) {
                 if (ChassisSub.pushed() && (ChassisSub.chassisState == ChassisSubsystem.chassis.holding)) {
                     CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup( new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new chassisRetreat(ChassisSub),
-                            new WaitCommand(200), new chassisReposition(ChassisSub), new InstantCommand(() -> {
+                            new WaitCommand(200), new midReposition(ChassisSub), new InstantCommand(() -> {
                         IntakeSub.botCommandComplete = true;
                     })));
                 } else {
@@ -102,7 +103,7 @@ public class AutoMidRight extends LinearOpMode {
                                 }),
                                 new park(ChassisSub, camera.parkingZone)));
                     } else if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight < 5) && (SubConstants.conestackHeight > 0)) {
-                        CommandScheduler.getInstance().schedule( new ParallelCommandGroup(
+                        CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
                                 new AutoMidDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
                                 new SequentialCommandGroup(
                                         new AutoConeExtend(IntakeSub, hSlideSub),
@@ -114,6 +115,7 @@ public class AutoMidRight extends LinearOpMode {
                 if ((ChassisSub.chassisState == ChassisSubsystem.chassis.parking) || (ChassisSub.chassisState == ChassisSubsystem.chassis.parked)) {
 
                 } else {
+                    CommandScheduler.getInstance().cancelAll();
                     CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new park(ChassisSub, camera.parkingZone)));
                 }
             }

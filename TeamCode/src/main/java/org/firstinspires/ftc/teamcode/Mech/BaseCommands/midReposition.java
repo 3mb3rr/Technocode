@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode.Mech.Commands;
+package org.firstinspires.ftc.teamcode.Mech.BaseCommands;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.Mech.subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 
-public class chassisMidPole extends CommandBase {
+public class midReposition extends CommandBase {
 
     // The subsystem the command runs on
     private final ChassisSubsystem ChassisSub;
 
-    public chassisMidPole(ChassisSubsystem subsystem) {
+    public midReposition(ChassisSubsystem subsystem) {
         ChassisSub = subsystem;
         addRequirements(ChassisSub);
     }
@@ -19,8 +19,8 @@ public class chassisMidPole extends CommandBase {
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
         if(ChassisSub.BLorRR)
-            ChassisSub.moveTo(new Pose2d(-50, -3.5, Math.toRadians(0)), 90);
-        else ChassisSub.moveTo(new Pose2d(-50, 1, Math.toRadians(0)), -88);
+            ChassisSub.moveTo(new Pose2d(-50, -3.5, Math.toRadians(90)));
+        else ChassisSub.moveTo(new Pose2d(-50, 1, Math.toRadians(-88)));
     }
     @Override
     public void execute() {
@@ -40,5 +40,5 @@ public class chassisMidPole extends CommandBase {
         return ChassisSub.atCorrectPosition();
     }
 
-
 }
+

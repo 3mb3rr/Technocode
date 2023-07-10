@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.autoArmDown;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.grabberOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideAutoOpen;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideSafeOpen;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.hSlideSubsystem;
 

@@ -4,12 +4,12 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.hSlideSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 
-public class hSlideClose extends CommandBase {
+public class hSlideRetract extends CommandBase {
 
     // The subsystem the command runs on
     private final hSlideSubsystem hSlideSub;
 
-    public hSlideClose(hSlideSubsystem subsystem) {
+    public hSlideRetract(hSlideSubsystem subsystem) {
         hSlideSub = subsystem;
         addRequirements(hSlideSub);
     }
@@ -31,7 +31,7 @@ public class hSlideClose extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if((hSlideSub.hClose()) || (hSlideSub.slideCurrentSpike()) || ((hSlideSub.getSlidePosition()<50) && (hSlideSub.getSlideVelocity()<0.1)))
+        if((hSlideSub.hClose()))
         {return true;}
         return false;
     }
