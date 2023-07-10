@@ -25,7 +25,7 @@ public class chassisReposition extends CommandBase {
     @Override
     public void execute() {
         if(ChassisSub.trajectoryCompleted){
-            ChassisSub.chassisState = ChassisSubsystem.chassis.holding;
+            ChassisSub.chassisState = ChassisSubsystem.chassis.correcting;
         }
     }
 

@@ -11,7 +11,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.armDrop;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisReposition;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperGrab;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.midReposition;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnMiddle;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.vSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.Commands.Retract;
 import org.firstinspires.ftc.teamcode.Mech.Commands.chassisContestedPole;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
@@ -21,6 +26,7 @@ import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeExtend;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeGrab;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisRetreat;
 import org.firstinspires.ftc.teamcode.Mech.Commands.park;
+import org.firstinspires.ftc.teamcode.Mech.Commands.transfer;
 import org.firstinspires.ftc.teamcode.Mech.Commands.zoneDetection;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.Camera;
@@ -62,7 +68,7 @@ public class AutoSafeLeft extends LinearOpMode {
             }
         };
         CommandScheduler.getInstance().registerSubsystem(ChassisSub, DepositSub, vSlideSub, IntakeSub, hSlideSub, camera);
-        CommandScheduler.getInstance().schedule(new ParallelCommandGroup(new hSlideClose(hSlideSub), new zoneDetection(camera)).deadlineWith(new WaitUntilCommand(notInitLoop)));
+        CommandScheduler.getInstance().schedule(new ParallelCommandGroup(new hSlideClose(hSlideSub), new armDrop(IntakeSub), new zoneDetection(camera)).deadlineWith(new WaitUntilCommand(notInitLoop)));
         while ((!isStopRequested()) && (!isStarted())) {
             CommandScheduler.getInstance().run();
             telemetry.addLine("initialization");
@@ -83,10 +89,8 @@ public class AutoSafeLeft extends LinearOpMode {
             if (timer.milliseconds() < 27500) {
                 if (ChassisSub.pushed() && (ChassisSub.chassisState == ChassisSubsystem.chassis.holding)) {
                     CommandScheduler.getInstance().cancelAll();
-                    CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup( new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new chassisRetreat(ChassisSub),
-                            new WaitCommand(200), new chassisReposition(ChassisSub), new InstantCommand(() -> {
-                        IntakeSub.botCommandComplete = true;
-                    })));
+                    CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new dropperGrab(DepositSub), new ParallelCommandGroup(new ttTurnMiddle(DepositSub), new hSlideClose(hSlideSub), new vSlideClose(vSlideSub), new tArmDrop(IntakeSub)), new chassisRetreat(ChassisSub),
+                            new transfer(IntakeSub, DepositSub), new chassisReposition(ChassisSub), new InstantCommand(() -> {IntakeSub.botCommandComplete = true;})));
                 } else {
                     if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight == 5)) {
                         IntakeSub.botCommandComplete = false;
@@ -118,7 +122,7 @@ public class AutoSafeLeft extends LinearOpMode {
 
                 } else {
                     CommandScheduler.getInstance().cancelAll();
-                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new park(ChassisSub, camera.parkingZone)));
+                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new dropperGrab(DepositSub), new ParallelCommandGroup(new ttTurnMiddle(DepositSub), new hSlideClose(hSlideSub), new vSlideClose(vSlideSub), new tArmDrop(IntakeSub)), new park(ChassisSub, camera.parkingZone)));
                 }
                 telemetry.update();
             }

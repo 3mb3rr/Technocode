@@ -20,7 +20,7 @@ public class chassisRetreat extends CommandBase {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
         if(ChassisSub.BLorRR)
             ChassisSub.splineTo(new Pose2d(-26, -1, Math.toRadians(90)), Math.toRadians(0));
-        else ChassisSub.splineTo(new Pose2d(-26, 1, Math.toRadians(-90)), Math.toRadians(0));
+        else ChassisSub.splineTo(new Pose2d(-26, -1, Math.toRadians(-90)), Math.toRadians(0));
     }
     @Override
     public void execute() {

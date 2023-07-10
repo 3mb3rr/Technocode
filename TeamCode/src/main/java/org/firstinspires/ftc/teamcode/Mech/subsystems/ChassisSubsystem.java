@@ -72,8 +72,12 @@ public class ChassisSubsystem extends SubsystemBase {
 
 
     public void moveTo(Pose2d targetPos1){
+        double eHead = 0;
+        if(targetPos1.getHeading()<0) eHead = 2*Math.PI+targetPos1.getHeading();
+        else eHead = targetPos1.getHeading();
+
+        expectedPos= new Pose2d(targetPos1.getX(), targetPos1.getY(), eHead);
         trajectoryCompleted = false;
-        expectedPos=targetPos1;
         TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
                 .lineToLinearHeading(targetPos1)
                 .addDisplacementMarker(() -> {
@@ -83,8 +87,12 @@ public class ChassisSubsystem extends SubsystemBase {
         drive.followTrajectorySequence(t1);
     }
     public void splineTo(Pose2d targetPos1, double endTangent){
+        double eHead = 0;
+        if(targetPos1.getHeading()<0) eHead = 2*Math.PI+targetPos1.getHeading();
+        else eHead = targetPos1.getHeading();
+
+        expectedPos= new Pose2d(targetPos1.getX(), targetPos1.getY(), eHead);
         trajectoryCompleted = false;
-        expectedPos=targetPos1;
         TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
                 .resetVelConstraint()
                 .splineToLinearHeading(targetPos1, endTangent)
