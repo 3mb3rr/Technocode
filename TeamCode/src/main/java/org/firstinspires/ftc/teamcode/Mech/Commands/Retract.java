@@ -26,7 +26,7 @@ public class Retract extends SequentialCommandGroup {
     public Retract(IntakeSubsystem IntakeSub, hSlideSubsystem hSlideSub, DepositSubsystem DepositSub, vSlideSubsystem vSlideSub)
     {
         addCommands (new SequentialCommandGroup(new dropperGrab(DepositSub),
-                new ParallelCommandGroup(new hSlideRetract(hSlideSub), new tArmDrop(IntakeSub), new vSlideRetract(vSlideSub), new ttTurnMiddle(DepositSub))
+                new ParallelCommandGroup(new hSlideClose(hSlideSub), new tArmDrop(IntakeSub), new vSlideClose(vSlideSub), new ttTurnMiddle(DepositSub))
         ), new transfer(IntakeSub, DepositSub));
 
         addRequirements(IntakeSub);

@@ -42,7 +42,7 @@ public class chassisToConestack extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if((hSlideSub.slideCurrentSpike()) || (IntakeSub.hasCone()) || ((ChassisSub.getYVelocity()<0.2) && (ChassisSub.BLorRR) && (ChassisSub.getY()>-17)) || ((ChassisSub.getYVelocity()>-0.2) && (!ChassisSub.BLorRR) && (ChassisSub.getY()<17)))
+        if((hSlideSub.slideCurrentSpike()) || (IntakeSub.hasCone())/* || ((ChassisSub.getYVelocity()<0.2) && (ChassisSub.BLorRR) && (ChassisSub.getY()>-17)) || ((ChassisSub.getYVelocity()>-0.2) && (!ChassisSub.BLorRR) && (ChassisSub.getY()<17))*/)
         {return true;}
         return false;
     }

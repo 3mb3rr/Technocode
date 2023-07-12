@@ -41,7 +41,7 @@ import java.util.function.BooleanSupplier;
 
 @Autonomous
 public class AutoMidLeft extends LinearOpMode {
-
+        boolean repositioning = false;
 
     public void runOpMode() {
 
@@ -86,10 +86,14 @@ public class AutoMidLeft extends LinearOpMode {
             CommandScheduler.getInstance().run();
             IntakeSub.depositCone(DepositSub.hasCone());
             if (timer.milliseconds() < 27500) {
-                if (ChassisSub.pushed() && (ChassisSub.chassisState == ChassisSubsystem.chassis.holding)) {
+                if (ChassisSub.pushed() && (ChassisSub.chassisState == ChassisSubsystem.chassis.holding) && (!repositioning)) {
                     CommandScheduler.getInstance().cancelAll();
+                    IntakeSub.botCommandComplete = false;
+                    repositioning = true;
                     CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new dropperGrab(DepositSub), new ParallelCommandGroup(new ttTurnMiddle(DepositSub), new hSlideClose(hSlideSub), new vSlideClose(vSlideSub), new tArmDrop(IntakeSub)), new chassisRetreat(ChassisSub),
-                            new transfer(IntakeSub, DepositSub), new midReposition(ChassisSub), new InstantCommand(() -> {IntakeSub.botCommandComplete = true;})));
+                            new transfer(IntakeSub, DepositSub), new midReposition(ChassisSub),
+                            new InstantCommand(() -> {IntakeSub.botCommandComplete = true;}),
+                            new InstantCommand(() -> {repositioning = false;})));
                 } else {
                     telemetry.addLine("in normal loop");
                     if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight == 5)) {

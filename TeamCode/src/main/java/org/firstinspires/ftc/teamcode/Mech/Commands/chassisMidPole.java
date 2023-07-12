@@ -19,7 +19,7 @@ public class chassisMidPole extends CommandBase {
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
         if(ChassisSub.BLorRR)
-            ChassisSub.moveTo(new Pose2d(-50, -3.5, Math.toRadians(0)), 90);
+            ChassisSub.moveTo(new Pose2d(-50, -3, Math.toRadians(0)), 90);
         else ChassisSub.moveTo(new Pose2d(-50, 1, Math.toRadians(0)), -88);
     }
     @Override

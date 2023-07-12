@@ -14,13 +14,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.armDrop;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisReposition;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperGrab;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideRetract;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.midReposition;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnMiddle;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.vSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoMidDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.Retract;
+import org.firstinspires.ftc.teamcode.Mech.Commands.chassisContestedPole;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
+import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeDrop;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeExtend;
 import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeGrab;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisRetreat;
@@ -40,7 +43,7 @@ import java.util.function.BooleanSupplier;
 
 @Autonomous
 public class AutoMidRight extends LinearOpMode {
-
+    boolean repositioning = false;
 
     public void runOpMode() {
 
@@ -85,11 +88,14 @@ public class AutoMidRight extends LinearOpMode {
             CommandScheduler.getInstance().run();
             IntakeSub.depositCone(DepositSub.hasCone());
             if (timer.milliseconds() < 27500) {
-                CommandScheduler.getInstance().cancelAll();
-                if (ChassisSub.pushed() && (ChassisSub.chassisState == ChassisSubsystem.chassis.holding)) {
+                if (ChassisSub.pushed() && (ChassisSub.chassisState == ChassisSubsystem.chassis.holding) && (!repositioning)) {
                     CommandScheduler.getInstance().cancelAll();
+                    IntakeSub.botCommandComplete = false;
+                    repositioning = true;
                     CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new dropperGrab(DepositSub), new ParallelCommandGroup(new ttTurnMiddle(DepositSub), new hSlideClose(hSlideSub), new vSlideClose(vSlideSub), new tArmDrop(IntakeSub)), new chassisRetreat(ChassisSub),
-                            new transfer(IntakeSub, DepositSub), new midReposition(ChassisSub), new InstantCommand(() -> {IntakeSub.botCommandComplete = true;})));
+                            new transfer(IntakeSub, DepositSub), new midReposition(ChassisSub),
+                            new InstantCommand(() -> {IntakeSub.botCommandComplete = true;}),
+                            new InstantCommand(() -> {repositioning = false;})));
                 } else {
                     if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight == 5)) {
                         IntakeSub.botCommandComplete = false;
@@ -108,7 +114,7 @@ public class AutoMidRight extends LinearOpMode {
                                 }),
                                 new park(ChassisSub, camera.parkingZone)));
                     } else if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight < 5) && (SubConstants.conestackHeight > 0)) {
-                        CommandScheduler.getInstance().schedule(new ParallelCommandGroup(
+                        CommandScheduler.getInstance().schedule( new ParallelCommandGroup(
                                 new AutoMidDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
                                 new SequentialCommandGroup(
                                         new AutoConeExtend(IntakeSub, hSlideSub),
@@ -121,7 +127,7 @@ public class AutoMidRight extends LinearOpMode {
 
                 } else {
                     CommandScheduler.getInstance().cancelAll();
-                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new dropperGrab(DepositSub), new ParallelCommandGroup(new ttTurnMiddle(DepositSub), new hSlideClose(hSlideSub), new vSlideClose(vSlideSub), new tArmDrop(IntakeSub)), new park(ChassisSub, camera.parkingZone)));
+                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new dropperGrab(DepositSub), new hSlideClose(hSlideSub), new ParallelCommandGroup(new ttTurnMiddle(DepositSub), new vSlideClose(vSlideSub), new tArmDrop(IntakeSub)), new park(ChassisSub, camera.parkingZone)));
                 }
             }
             telemetry.addData("slide state", hSlideSub.hSlideState);

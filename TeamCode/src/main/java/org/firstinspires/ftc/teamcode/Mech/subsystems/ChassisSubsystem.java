@@ -38,7 +38,7 @@ public class ChassisSubsystem extends SubsystemBase {
     double lastTime, lastTime2 = -1;
     public boolean trajectoryCompleted = false;
     public boolean holdCompleted = true;
-    SampleMecanumDrive drive;
+    public SampleMecanumDrive drive;
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
@@ -85,6 +85,21 @@ public class ChassisSubsystem extends SubsystemBase {
                 })
                 .build();
         drive.followTrajectorySequence(t1);
+    }
+    public void AmoveTo(Pose2d targetPos1){
+        double eHead = 0;
+        if(targetPos1.getHeading()<0) eHead = 2*Math.PI+targetPos1.getHeading();
+        else eHead = targetPos1.getHeading();
+
+        expectedPos= new Pose2d(targetPos1.getX(), targetPos1.getY(), eHead);
+        trajectoryCompleted = false;
+        TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
+                .lineToLinearHeading(targetPos1)
+                .addDisplacementMarker(() -> {
+                    trajectoryCompleted = true;
+                })
+                .build();
+        drive.followTrajectorySequenceAsync(t1);
     }
     public void splineTo(Pose2d targetPos1, double endTangent){
         double eHead = 0;

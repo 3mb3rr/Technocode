@@ -117,7 +117,7 @@
         @Override
         public void periodic(){
             if (armTargetAngle!=1000){
-            armAngle = (Pot.getVoltage()-0.584)/SubConstants.degpervolt;
+            armAngle = (Pot.getVoltage()-0.587)/SubConstants.degpervolt;
             armOutput = controller.calculate(armTargetAngle, armAngle)+(SubConstants.armFeedforward*Math.cos(Math.toRadians(armAngle)));}
             arm.setPower(armOutput);
             if (level && !fallenCone){

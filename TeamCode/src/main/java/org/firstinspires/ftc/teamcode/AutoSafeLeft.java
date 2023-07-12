@@ -41,7 +41,7 @@ import java.util.function.BooleanSupplier;
 @Autonomous
 public class AutoSafeLeft extends LinearOpMode {
 
-
+    boolean repositioning = false;
     public void runOpMode() {
 
         DepositSubsystem DepositSub = new DepositSubsystem(hardwareMap);
@@ -87,11 +87,15 @@ public class AutoSafeLeft extends LinearOpMode {
             telemetry.addData("turntable", DepositSub.ttState);
             telemetry.addData("slide", vSlideSub.vSlideState);
             if (timer.milliseconds() < 27500) {
-                if (ChassisSub.pushed() && (ChassisSub.chassisState == ChassisSubsystem.chassis.holding)) {
+                if (ChassisSub.pushed() && (ChassisSub.chassisState == ChassisSubsystem.chassis.holding) && (!repositioning)) {
                     CommandScheduler.getInstance().cancelAll();
+                    IntakeSub.botCommandComplete = false;
+                    repositioning = true;
                     CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new dropperGrab(DepositSub), new ParallelCommandGroup(new ttTurnMiddle(DepositSub), new hSlideClose(hSlideSub), new vSlideClose(vSlideSub), new tArmDrop(IntakeSub)), new chassisRetreat(ChassisSub),
-                            new transfer(IntakeSub, DepositSub), new chassisReposition(ChassisSub), new InstantCommand(() -> {IntakeSub.botCommandComplete = true;})));
-                } else {
+                            new transfer(IntakeSub, DepositSub), new chassisReposition(ChassisSub),
+                            new InstantCommand(() -> {IntakeSub.botCommandComplete = true;}),
+                            new InstantCommand(() -> {repositioning = false;})));
+                }else {
                     if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight == 5)) {
                         IntakeSub.botCommandComplete = false;
                         CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new chassisContestedPole(ChassisSub), new ParallelCommandGroup(
