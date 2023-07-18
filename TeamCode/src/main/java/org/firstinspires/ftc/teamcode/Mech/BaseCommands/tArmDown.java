@@ -19,10 +19,10 @@ public class tArmDown extends CommandBase {
     @Override
     public void initialize() {
         IntakeSub.armState = IntakeSubsystem.Arm.grabbing;
-        SubConstants.armFeedforward = 0.29;
-        IntakeSub.armToAngle(-19);
+        SubConstants.armFeedforward = 0.31;
+        IntakeSub.armToAngle(-22);
         //change: -15 to -15
-        IntakeSub.grotateToAngle(19);
+        IntakeSub.grotateToAngle(22);
         IntakeSub.fallenCone = false;
         //change: 15 to
     }

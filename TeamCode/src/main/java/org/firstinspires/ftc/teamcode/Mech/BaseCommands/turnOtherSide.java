@@ -6,26 +6,21 @@ import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 
-public class midReposition extends CommandBase {
+public class turnOtherSide extends CommandBase {
 
     // The subsystem the command runs on
     private final ChassisSubsystem ChassisSub;
     private Pose2d pose = new Pose2d();
 
-    public midReposition(ChassisSubsystem subsystem) {
+    public turnOtherSide(ChassisSubsystem subsystem) {
         ChassisSub = subsystem;
         addRequirements(ChassisSub);
-        if(ChassisSub.BLorRR)
-            pose = new Pose2d(SubConstants.chassisContestedRight.getX(), SubConstants.chassisContestedRight.getY(), Math.toRadians(90));
-        else
-            pose = new Pose2d(SubConstants.chassisContestedLeft.getX(), SubConstants.chassisContestedLeft.getY(), Math.toRadians(-90));
-
     }
 
     @Override
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
-        ChassisSub.moveTo(pose);
+        ChassisSub.smoveTo(new Pose2d(-49, 74.5, Math.toRadians(88)));
     }
     @Override
     public void execute() {

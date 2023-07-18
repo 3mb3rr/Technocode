@@ -26,17 +26,18 @@ public class fastPark extends CommandBase {
         if ((ChassisSub.trajectoryCompleted) && (!temp1)) {
             if (ChassisSub.BLorRR) {
                 if ((zone == 2) || (zone == 0))
-                    ChassisSub.AmoveTo(new Pose2d(-50, 1, Math.toRadians(0)));
+                    ChassisSub.moveTo(new Pose2d(-49, 1, Math.toRadians(0)));
                 else if (zone == 1)
-                    ChassisSub.AmoveTo(new Pose2d(-50, -23, Math.toRadians(0)));
+                    ChassisSub.moveTo(new Pose2d(-49, -23, Math.toRadians(0)));
                 else if (zone == 3)
-                    ChassisSub.AmoveTo(new Pose2d(-50, 25, Math.toRadians(0)));
+                    ChassisSub.moveTo(new Pose2d(-49, 25, Math.toRadians(0)));
             } else {
                 if ((zone == 2) || (zone == 0))
-                    ChassisSub.AmoveTo(new Pose2d(-50, -1, Math.toRadians(0)));
+                    ChassisSub.moveTo(new Pose2d(-49, -1, Math.toRadians(0)));
                 else if (zone == 1)
-                    ChassisSub.AmoveTo(new Pose2d(-50, -25, Math.toRadians(0)));
-                else if (zone == 3) ChassisSub.AmoveTo(new Pose2d(-50, 23, Math.toRadians(0)));
+                    ChassisSub.moveTo(new Pose2d(-49, -25, Math.toRadians(0)));
+                else if (zone == 3)
+                    ChassisSub.moveTo(new Pose2d(-49, 23, Math.toRadians(0)));
             }
         }
     }

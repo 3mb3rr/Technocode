@@ -7,19 +7,19 @@ import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-public class ttMidLeft extends CommandBase {
+public class fastTurnRight extends CommandBase {
 
     // The subsystem the command runs on
     private final DepositSubsystem DepositSub;
 
-    public ttMidLeft(DepositSubsystem subsystem) {
+    public fastTurnRight(DepositSubsystem subsystem) {
         DepositSub = subsystem;
         addRequirements(DepositSub);
     }
 
     @Override
     public void initialize() {
-        DepositSub.turntableToAngle(SubConstants.ttLeftAngle+13);
+        DepositSub.turntableToAngle(SubConstants.fRightAngle);
         DepositSub.ttState = DepositSub.ttState.turning;
     }
     @Override
@@ -29,7 +29,7 @@ public class ttMidLeft extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if((DepositSub.getTTVelocity()<2) && (DepositSub.getTTAngle()<(SubConstants.ttLeftAngle+15.5)) && (DepositSub.getTTAngle()>(SubConstants.ttLeftAngle+10.5)))
+        if((DepositSub.getTTVelocity()<2) && (DepositSub.getTTAngle()<(SubConstants.fRightAngle+2.5)) && (DepositSub.getTTAngle()>(SubConstants.fRightAngle-2.5)))
         {return true;}
         return false;
     }

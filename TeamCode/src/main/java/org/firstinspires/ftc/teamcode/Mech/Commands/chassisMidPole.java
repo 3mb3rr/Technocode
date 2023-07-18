@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Mech.Commands;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 
@@ -19,12 +20,12 @@ public class chassisMidPole extends CommandBase {
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
         if(ChassisSub.BLorRR)
-            ChassisSub.moveTo(new Pose2d(-50, -3, Math.toRadians(0)), 90);
-        else ChassisSub.moveTo(new Pose2d(-50, 1, Math.toRadians(0)), -88);
+            ChassisSub.moveTo(SubConstants.chassisMidRight, 88);
+        else ChassisSub.moveTo(SubConstants.chassisMidLeft, -88);
     }
     @Override
     public void execute() {
-        if(ChassisSub.trajectoryCompleted){
+        if(!ChassisSub.drive.isBusy()){
             ChassisSub.chassisState = ChassisSubsystem.chassis.holding;
         }
     }

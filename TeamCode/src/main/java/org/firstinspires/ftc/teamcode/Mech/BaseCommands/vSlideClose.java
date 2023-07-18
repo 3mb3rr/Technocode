@@ -17,7 +17,7 @@ public class vSlideClose extends CommandBase {
     @Override
     public void initialize() {
         vSlideSub.vSlideState = vSlideSubsystem.VSlide.retracting;
-        vSlideSub.vSlideToPosition(0);
+        vSlideSub.setPower(-1);
     }
     @Override
     public void end(boolean interrupted) {
@@ -29,7 +29,7 @@ public class vSlideClose extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if(((vSlideSub.getSlideVelocity()<5) && (vSlideSub.getSlidePosition()<(15))) || (vSlideSub.slideCurrentSpike()) || (vSlideSub.vClose()))
+        if(((vSlideSub.getSlideVelocity()<5) && (vSlideSub.getSlidePosition()<(15))) || (vSlideSub.vClose()))
         {return true;}
         return false;
     }

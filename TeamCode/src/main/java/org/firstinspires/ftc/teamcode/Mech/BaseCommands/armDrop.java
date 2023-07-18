@@ -20,7 +20,7 @@ public class armDrop extends CommandBase {
         SubConstants.armFeedforward = 0.1;
         IntakeSub.armState = IntakeSubsystem.Arm.dropping;
         IntakeSub.grotateToAngle(76);
-        IntakeSub.armToAngle(90);
+        IntakeSub.armToAngle(89);
     }
     @Override
     public void end(boolean interrupted) {

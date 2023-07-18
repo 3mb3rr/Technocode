@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Mech.BaseCommands.grabberGrab;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.grabberOpen;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideClose;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.slideToConestack;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.tArmDrop;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.hSlideSubsystem;
@@ -52,14 +53,16 @@ public class AutoConeGrab extends SequentialCommandGroup {
                 new grabberGrab(IntakeSub),
                 new WaitCommand(300),
                 new ParallelCommandGroup(
-                        new armDrop(IntakeSub),
+                        new tArmDrop(IntakeSub),
                         new hSlideClose(hSlideSub),
                         new InstantCommand(() ->{
                             SubConstants.conestackHeight--;
                         })
                 ),
+                new armDrop(IntakeSub),
+                new WaitCommand(250),
                 new grabberOpen(IntakeSub),
-                new WaitCommand(400),
+                new WaitCommand(350),
                 new InstantCommand(() -> {IntakeSub.botCommandComplete = true;})
         );
 

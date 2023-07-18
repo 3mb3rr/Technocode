@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.armDrop;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisReposition;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.dropperGrab;
-import org.firstinspires.ftc.teamcode.Mech.BaseCommands.hSlideRetract;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.midReposition;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnMiddle;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.vSlideClose;
@@ -43,8 +42,9 @@ import java.util.function.BooleanSupplier;
 
 @Autonomous
 public class AutoMidRight extends LinearOpMode {
-    boolean repositioning = false;
 
+
+    boolean repositioning = false;
     public void runOpMode() {
 
         DepositSubsystem DepositSub = new DepositSubsystem(hardwareMap);
@@ -127,7 +127,7 @@ public class AutoMidRight extends LinearOpMode {
 
                 } else {
                     CommandScheduler.getInstance().cancelAll();
-                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new dropperGrab(DepositSub), new hSlideClose(hSlideSub), new ParallelCommandGroup(new ttTurnMiddle(DepositSub), new vSlideClose(vSlideSub), new tArmDrop(IntakeSub)), new park(ChassisSub, camera.parkingZone)));
+                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new dropperGrab(DepositSub), new ParallelCommandGroup(new ttTurnMiddle(DepositSub), new hSlideClose(hSlideSub), new vSlideClose(vSlideSub), new tArmDrop(IntakeSub)), new park(ChassisSub, camera.parkingZone)));
                 }
             }
             telemetry.addData("slide state", hSlideSub.hSlideState);

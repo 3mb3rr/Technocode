@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Mech.Commands;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 
@@ -18,9 +19,14 @@ public class fastContestedPole extends CommandBase {
     @Override
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
-        if(ChassisSub.BLorRR)
-            ChassisSub.moveTo( new Pose2d(-50, 3, Math.toRadians(90)));
-        else ChassisSub.moveTo(new Pose2d(-50, -4, Math.toRadians(-88)));
+         ChassisSub.moveTo(new Pose2d(-49, -3.5, Math.toRadians(0)), -89/*new Pose2d(-49, -4, Math.toRadians(-89))*/);
+    }
+    @Override
+    public void execute() {
+        if(!ChassisSub.drive.isBusy()){
+            ChassisSub.chassisState = ChassisSubsystem.chassis.correcting;
+        }
+
     }
 
     @Override
@@ -31,7 +37,7 @@ public class fastContestedPole extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return ChassisSub.trajectoryCompleted;
+        return ChassisSub.atCorrectPosition();
     }
 
 }

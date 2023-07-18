@@ -19,12 +19,12 @@ public class chassisSafe extends CommandBase {
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
         if(ChassisSub.BLorRR)
-            ChassisSub.AmoveTo(new Pose2d(-50, -22, Math.toRadians(90)));
-        else ChassisSub.AmoveTo(new Pose2d(-50, 20, Math.toRadians(-88)));
+            ChassisSub.moveTo(new Pose2d(-49, -22, Math.toRadians(86)));
+        else ChassisSub.moveTo(new Pose2d(-49, 20, Math.toRadians(-90)));
     }
     @Override
     public void execute() {
-        if(!ChassisSub.trajectoryCompleted){
+        if(!ChassisSub.drive.isBusy()){
             ChassisSub.chassisState = ChassisSubsystem.chassis.correcting;
         }
     }

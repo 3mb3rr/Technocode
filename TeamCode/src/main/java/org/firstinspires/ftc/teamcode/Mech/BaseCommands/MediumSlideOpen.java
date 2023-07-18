@@ -27,8 +27,8 @@ public class MediumSlideOpen extends CommandBase {
 
     @Override
     public boolean isFinished() {
-//        if(((vSlideSub.getSlideVelocity()<0.5) && (vSlideSub.getSlidePosition()>300)) || (vSlideSub.getSlideVelocity()<5) && (vSlideSub.getSlidePosition()<(SubConstants.mPolePos+5)) && (vSlideSub.getSlidePosition()>(SubConstants.mPolePos-5)))
-//        {return true;}
+        if(((vSlideSub.getSlideVelocity()<0.5) && (vSlideSub.getSlidePosition()>300)) || (vSlideSub.getSlideVelocity()<5) && (vSlideSub.getSlidePosition()<(SubConstants.mPolePos+5)) && (vSlideSub.getSlidePosition()>(SubConstants.mPolePos-5)))
+        {return true;}
         return false;
     }
 

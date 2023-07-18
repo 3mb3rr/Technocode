@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Mech.Commands;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.ChassisSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 
@@ -19,12 +20,12 @@ public class chassisContestedPole extends CommandBase {
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
         if(ChassisSub.BLorRR)
-        ChassisSub.moveTo(new Pose2d(-50, 2, Math.toRadians(0)), 88.5);
-        else ChassisSub.moveTo(new Pose2d(-50, -4, Math.toRadians(0)), -88);
+        ChassisSub.moveTo(SubConstants.chassisContestedRight, 86.5);
+        else ChassisSub.moveTo(SubConstants.chassisContestedLeft, -89);
     }
     @Override
     public void execute() {
-        if(ChassisSub.trajectoryCompleted){
+        if(!ChassisSub.drive.isBusy()){
             ChassisSub.chassisState = ChassisSubsystem.chassis.correcting;
         }
     }

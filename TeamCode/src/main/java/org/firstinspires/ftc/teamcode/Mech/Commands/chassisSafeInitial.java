@@ -19,8 +19,8 @@ public class chassisSafeInitial extends CommandBase {
     public void initialize() {
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
         if(ChassisSub.BLorRR)
-            ChassisSub.moveTo(new Pose2d(-50, 2, Math.toRadians(0)), 88.5);
-        else ChassisSub.moveTo(new Pose2d(-50, -4, Math.toRadians(0)), -88);
+            ChassisSub.moveTo(new Pose2d(-49, 2, Math.toRadians(0)));
+        else ChassisSub.moveTo(new Pose2d(-49, -4, Math.toRadians(0)));
     }
     @Override
     public void execute() {
@@ -33,7 +33,7 @@ public class chassisSafeInitial extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return ChassisSub.trajectoryCompleted;
+        return !ChassisSub.drive.isBusy();
     }
 
 }

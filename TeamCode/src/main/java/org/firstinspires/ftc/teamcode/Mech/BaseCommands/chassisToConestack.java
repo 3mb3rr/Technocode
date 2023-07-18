@@ -26,11 +26,11 @@ public class chassisToConestack extends CommandBase {
     public void initialize() {
         hSlideSub.hSlideState = hSlideSubsystem.HSlide.extending;
         ChassisSub.chassisState = ChassisSubsystem.chassis.driving;
-        ChassisSub.setWheelPowers(0.55, 0.55, 0.55, 0.55);
+        ChassisSub.setWheelPowers(0.5, 0.5, 0.5, 0.5);
     }
     @Override
     public void execute(){
-        ChassisSub.setWheelPowers(0.55, 0.55, 0.55, 0.55);
+        ChassisSub.setWheelPowers(0.5, 0.5, 0.5, 0.5);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class chassisToConestack extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if((hSlideSub.slideCurrentSpike()) || (IntakeSub.hasCone())/* || ((ChassisSub.getYVelocity()<0.2) && (ChassisSub.BLorRR) && (ChassisSub.getY()>-17)) || ((ChassisSub.getYVelocity()>-0.2) && (!ChassisSub.BLorRR) && (ChassisSub.getY()<17))*/)
+        if((hSlideSub.slideCurrentSpike()) || (IntakeSub.hasCone()) || ((ChassisSub.getYVelocity()<0.1) && (ChassisSub.BLorRR) && (ChassisSub.getY()>-13)) || ((ChassisSub.getYVelocity()>-0.1) && (!ChassisSub.BLorRR) && (ChassisSub.getY()<11)))
         {return true;}
         return false;
     }

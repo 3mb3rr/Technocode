@@ -23,6 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.teamcode.Mech.SubConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -84,9 +85,10 @@ public class ChassisSubsystem extends SubsystemBase {
                     trajectoryCompleted = true;
                 })
                 .build();
-        drive.followTrajectorySequence(t1);
+        drive.followTrajectorySequenceAsync(t1);
     }
-    public void AmoveTo(Pose2d targetPos1){
+
+    public void smoveTo(Pose2d targetPos1){
         double eHead = 0;
         if(targetPos1.getHeading()<0) eHead = 2*Math.PI+targetPos1.getHeading();
         else eHead = targetPos1.getHeading();
@@ -94,13 +96,16 @@ public class ChassisSubsystem extends SubsystemBase {
         expectedPos= new Pose2d(targetPos1.getX(), targetPos1.getY(), eHead);
         trajectoryCompleted = false;
         TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
-                .lineToLinearHeading(targetPos1)
+                .lineToLinearHeading(targetPos1,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL, 3, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .addDisplacementMarker(() -> {
                     trajectoryCompleted = true;
                 })
                 .build();
         drive.followTrajectorySequenceAsync(t1);
     }
+
     public void splineTo(Pose2d targetPos1, double endTangent){
         double eHead = 0;
         if(targetPos1.getHeading()<0) eHead = 2*Math.PI+targetPos1.getHeading();
@@ -115,7 +120,7 @@ public class ChassisSubsystem extends SubsystemBase {
                     trajectoryCompleted = true;
                 })
                 .build();
-        drive.followTrajectorySequence(t1);
+        drive.followTrajectorySequenceAsync(t1);
     }
     public void splineTo(Pose2d targetPos1, double endTangent1, Pose2d targetPos2, double endTangent2){
         trajectoryCompleted = false;
@@ -128,7 +133,7 @@ public class ChassisSubsystem extends SubsystemBase {
                     trajectoryCompleted = true;
                 })
                 .build();
-        drive.followTrajectorySequence(t1);
+        drive.followTrajectorySequenceAsync(t1);
     }
     public void simpleMoveF(int value){
         trajectoryCompleted = false;
@@ -164,6 +169,7 @@ public class ChassisSubsystem extends SubsystemBase {
     }
     public void moveTo(Pose2d targetPos1, Pose2d targetPos2){
         expectedPos=targetPos2;
+        trajectoryCompleted = false;
         TrajectorySequence t1 = drive.trajectorySequenceBuilder(robotPos)
                 .resetVelConstraint()
                 .lineToLinearHeading(targetPos1)
@@ -172,8 +178,6 @@ public class ChassisSubsystem extends SubsystemBase {
                     trajectoryCompleted = true;
                 })
                 .build();
-        trajectoryCompleted = false;
-
         drive.followTrajectorySequenceAsync(t1);
     }
     public void moveTo(Pose2d targetPos1, double degrees){
@@ -193,7 +197,7 @@ public class ChassisSubsystem extends SubsystemBase {
                 {trajectoryCompleted = true;})
                 .build();
         trajectoryCompleted = false;
-        drive.followTrajectorySequence(t1);
+        drive.followTrajectorySequenceAsync(t1);
     }
 
     public boolean atCorrectPosition(){
@@ -255,18 +259,18 @@ public class ChassisSubsystem extends SubsystemBase {
         robotPos = drive.getPoseEstimate();
         switch(chassisState) {
             case holding:
-                if((timer.milliseconds()>(lastTime+500)) && (holdCompleted) && (!atCorrectPosition())){
-                    lastTime= timer.milliseconds();
+                if(((lastTime+500)<timer.milliseconds()) && (!drive.isBusy()) && (!atCorrectPosition())){
+                    lastTime=timer.milliseconds();
                 if(holdingTemp){holdTo(new Pose2d((egetX()+0.000001), egetY(), Math.toRadians(egetHeading())));}
                 else{holdTo(expectedPos);}}
             case parked:
-                if((timer.milliseconds()>(lastTime+500)) && (holdCompleted) && (!atCorrectPosition())){
-                    lastTime= timer.milliseconds();
+                if(((lastTime+500)<timer.milliseconds()) && (!drive.isBusy()) && (!atCorrectPosition())){
+                    lastTime=timer.milliseconds();
                     if(holdingTemp){holdTo(new Pose2d((egetX()+0.000001), egetY(), Math.toRadians(egetHeading())));}
                     else{holdTo(expectedPos);}}
             case correcting:
-                if((timer.milliseconds()>(lastTime+500)) && (holdCompleted) && (!atCorrectPosition())){
-                    lastTime= timer.milliseconds();
+                if(((lastTime+500)<timer.milliseconds()) && (!drive.isBusy()) && (!atCorrectPosition())){
+                    lastTime=timer.milliseconds();
                     if(holdingTemp){holdTo(new Pose2d((egetX()+0.000001), egetY(), Math.toRadians(egetHeading())));}
                     else{holdTo(expectedPos);}}
 

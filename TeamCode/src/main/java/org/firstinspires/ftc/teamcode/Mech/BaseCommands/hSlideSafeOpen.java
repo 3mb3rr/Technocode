@@ -21,7 +21,7 @@ public class hSlideSafeOpen extends CommandBase {
     public void initialize() {
         hSlideSub.hSlideState = hSlideSubsystem.HSlide.extending;
 //        target = (SubConstants.hSlidePos[5-SubConstants.conestackHeight]);
-        target = (900);
+        target = (1000);
         hSlideSub.hSlideToPosition(target);
     }
 

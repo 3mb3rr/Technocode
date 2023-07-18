@@ -8,6 +8,8 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.depositClose;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.fastTurnLeft;
+import org.firstinspires.ftc.teamcode.Mech.BaseCommands.fastTurnRight;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.ttTurnLeft;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.DepositSubsystem;
 import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
@@ -37,7 +39,7 @@ public class AutoFastDrop extends SequentialCommandGroup {
                         new depositClose(DepositSub),
                         new dropperDrop(DepositSub),
                         new ParallelCommandGroup(
-                        new ConditionalCommand(new ttTurnRight(DepositSub), new ttTurnLeft(DepositSub), RIGHT),
+                        new ConditionalCommand(new fastTurnRight(DepositSub), new fastTurnLeft(DepositSub), RIGHT),
                         new highSlideOpen(vSlideSub)),
                         new depositOpen(DepositSub),
                         new InstantCommand(() -> {DepositSub.hasCone(false);}),

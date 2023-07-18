@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.Mech.Commands.AutoConeGrab;
 import org.firstinspires.ftc.teamcode.Mech.BaseCommands.chassisRetreat;
 import org.firstinspires.ftc.teamcode.Mech.Commands.chassisSafe;
 import org.firstinspires.ftc.teamcode.Mech.Commands.chassisSafeInitial;
+import org.firstinspires.ftc.teamcode.Mech.Commands.fastPark;
 import org.firstinspires.ftc.teamcode.Mech.Commands.park;
 import org.firstinspires.ftc.teamcode.Mech.Commands.zoneDetection;
 import org.firstinspires.ftc.teamcode.Mech.SubConstants;
@@ -39,7 +40,7 @@ import org.firstinspires.ftc.teamcode.Mech.subsystems.vSlideSubsystem;
 import java.util.function.BooleanSupplier;
 
 @Autonomous
-public class AutoVerySafe extends LinearOpMode {
+public class AutoVerySafeLeft extends LinearOpMode {
 
 
     public void runOpMode() {
@@ -49,7 +50,7 @@ public class AutoVerySafe extends LinearOpMode {
         IntakeSubsystem IntakeSub = new IntakeSubsystem(hardwareMap);
         hSlideSubsystem hSlideSub = new hSlideSubsystem(hardwareMap);
         ChassisSubsystem ChassisSub = new ChassisSubsystem(hardwareMap);
-        ChassisSub.BLorRR = true;
+        ChassisSub.BLorRR = false;
         ChassisSub.auto = true;
         Camera camera = new Camera(hardwareMap);
         CommandScheduler.getInstance().reset();
@@ -110,8 +111,8 @@ public class AutoVerySafe extends LinearOpMode {
                         IntakeSub.botCommandComplete = false;
                         CommandScheduler.getInstance().schedule(true, new SequentialCommandGroup(new tArmDrop(IntakeSub),
                                 new ParallelCommandGroup(
-                                new AutoSafeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
-                                new SequentialCommandGroup(new WaitUntilCommand(notDepositCone), new park(ChassisSub, camera.parkingZone)))));
+                                        new AutoSafeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
+                                        new SequentialCommandGroup(new WaitUntilCommand(notDepositCone), new WaitCommand(400), new fastPark(ChassisSub, camera.parkingZone)))));
                     } else if (IntakeSub.botCommandComplete && (SubConstants.conestackHeight < 5) && (SubConstants.conestackHeight > 0)) {
                         CommandScheduler.getInstance().schedule( new ParallelCommandGroup(
                                 new AutoSafeDrop(DepositSub, vSlideSub, ChassisSub.BLorRR),
@@ -126,7 +127,7 @@ public class AutoVerySafe extends LinearOpMode {
 
                 } else {
                     CommandScheduler.getInstance().cancelAll();
-                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new InstantCommand(() -> {ChassisSub.chassisState = ChassisSubsystem.chassis.parking;}), new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new park(ChassisSub, camera.parkingZone)));
+                    CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new InstantCommand(() -> {ChassisSub.chassisState = ChassisSubsystem.chassis.parking;}), new Retract(IntakeSub, hSlideSub, DepositSub, vSlideSub), new fastPark(ChassisSub, camera.parkingZone)));
                 }
             }
             telemetry.addData("slide state", hSlideSub.hSlideState);
